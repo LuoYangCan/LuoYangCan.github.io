@@ -78,5 +78,5 @@ theme: iissnan
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: https://github.com/LuoYangCan/LuoYangCan.github.io.git
+  repository: git@github.com:LuoYangCan/LuoYangCan.github.io.git
   branch: master
