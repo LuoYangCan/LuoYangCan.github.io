@@ -1,8 +1,7 @@
 ---
 title: 项目里的ReactiveCocoa
 date: 2017-07-28 18:59:44
-tags: RAC
- 
+tags: [RAC,iOS] 
 ---
 
 

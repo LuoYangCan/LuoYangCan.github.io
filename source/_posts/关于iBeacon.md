@@ -1,7 +1,7 @@
 ---
 title: 关于iBeacon
 date: 2017-08-06 18:54:02
-tags: iBeacon
+tags: [iBeacon,iOS]
 
 ---
 
@@ -38,7 +38,7 @@ iOS中的ibeacon通信数据有
 * （NSNumber）minor
 * （CLProximity）proximity
 * （CLLocationAccuracy）accuracy
-*    (NSInteger) rssi
+* (NSInteger) rssi
 
 分别含义是：
 
