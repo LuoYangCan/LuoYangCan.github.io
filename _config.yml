@@ -72,7 +72,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: iissnan
+theme: NexT
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
@@ -80,3 +80,7 @@ deploy:
   type: git
   repository: git@github.com:LuoYangCan/LuoYangCan.github.io.git
   branch: master
+
+#插件配置
+##Plugins: http://hexo.io/plugins/
+plugins: hexo-generate-feed
