@@ -38,7 +38,7 @@ iOS中的ibeacon通信数据有
 * （NSNumber）minor
 * （CLProximity）proximity
 * （CLLocationAccuracy）accuracy
-* (NSInteger) rssi
+*   (NSInteger) rssi
 
 分别含义是：
 

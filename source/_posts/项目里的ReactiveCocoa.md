@@ -30,7 +30,7 @@ RAC是github上的一个开源项目，可以说是将响应式编程做到了�
 
 比如
 
-```javascript
+```iOS
 //filter某个属性满足一定条件才执行。  
 
   [[RACObserve(self, count) filter:^BOOL(id count) {
@@ -42,7 +42,6 @@ RAC是github上的一个开源项目，可以说是将响应式编程做到了�
  }]subscribeNext:^(id count) {//上面return YES 才执行   
 
  NSLog(@"数量为===%@",count);    }];
-
 ```
 
 
@@ -61,7 +60,7 @@ RAC中监听属性改变不再像KVO中用```-observeValueForKeyPath:ofObject:ch
 
 而是使用block
 
-```javascript
+```iOS
 // 只有当名字以'j'开头，才会被记录
 [[RACAble(self.username) filter:^(NSString *newName) {
        return [newName hasPrefix:@"j"];
@@ -69,12 +68,11 @@ RAC中监听属性改变不再像KVO中用```-observeValueForKeyPath:ofObject:ch
    subscribeNext:^(NSString *newName) {
        NSLog(@"%@", newName);
    }];
-
 ```
 
 > Notification
 
-```javascript
+```iOS
 [[NSNotificationCenter defaultCenter]rac_addObserverForName:@"ReceiveData" object:nil] subscribeNext:^(NSNotification * _Nullable x) {
                 NSlog(@"%@",x);
    } 
