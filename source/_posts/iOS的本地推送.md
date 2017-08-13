@@ -14,7 +14,7 @@ iOS的推送有本地推送和远程推送两种，由于项目只需要个提�
 
 * 首先，我们需要打开Push Notification开关
 
-![Push Notification](/img/Push notification)
+![Push Notification](/img/Push notification.png)
 
 打开之后，系统会生成一个.entitlements文件
 
@@ -135,6 +135,7 @@ iOS的推送有本地推送和远程推送两种，由于项目只需要个提�
       }
       completionHandler(UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound|UNNotificationPresentationOptionAlert); // 需要执行这个方法，选择是否提醒用户，有Badge、Sound、Alert三种类型可以设置
   }
+  ```
 
 
   // 通知的点击事件
