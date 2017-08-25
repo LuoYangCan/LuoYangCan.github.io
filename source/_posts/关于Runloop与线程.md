@@ -6,7 +6,7 @@ tags: [RunLoop,iOS]
 
 ## RunLoop
 
-​	RunLoop是每一个iOS程序员应该都听过的一个名字，翻译过来大概是叫运行循环，在开发的初期几乎见不到RunLoop的身影。但它其实无处不在，最简单的例子就是Objective-C中的main函数。
+​	RunLoop是每一个iOS程序员应该都听过的一个名字，翻译过来大概是叫运行循环，在iOS攻城狮们的开发初期，几乎见不到RunLoop的身影。但它其实无处不在，最简单的例子就是Objective-C中的main函数。
 
 ```objective-c
 int main(int argc, char * argv[]) {
