@@ -21,3 +21,4 @@ title: 关于我
 [3]: http://nmid.cqupt.edu.cn/ "重邮移动互联网研究中心"
 [4]: http://www.smarterconnected.org/  "全国大学生智能互联创新大赛"
 
+![简历](/img/resume.png)
