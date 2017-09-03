@@ -300,6 +300,88 @@ class_rw_t* data() {
 
 
 
+#### Category
+
+```objective-c
+typedef struct category_t *Category;
+```
+
+`Category`为现有的类提供了拓展，存储了类别中可以拓展的实例方法、实例属性和类方法、类属性(objc2016新增特性)。
+
+```objective-c
+struct category_t {
+    const char *name;
+    classref_t cls;
+    struct method_list_t *instanceMethods;
+    struct method_list_t *classMethods;
+    struct protocol_list_t *protocols;
+    struct property_list_t *instanceProperties;
+    // Fields below this point are not always present on disk.
+    struct property_list_t *_classProperties;
+
+    method_list_t *methodsForMeta(bool isMeta) {
+        if (isMeta) return classMethods;
+        else return instanceMethods;
+    }
+
+    property_list_t *propertiesForMeta(bool isMeta, struct header_info *hi);
+};
+```
+
+App 启动加载镜像文件的时候，会简介调用到`attachCategories`函数，完成向类中添加`Category`的工作。
+
+#### Method
+
+```objective-c
+typedef struct method_t *Method;
+```
+
+它存储了方法名，方法类型和方法实现：
+
+```objective-c
+struct method_t {
+    SEL name;
+    const char *types;
+    IMP imp;
+
+    struct SortBySELAddress :
+        public std::binary_function<const method_t&,
+                                    const method_t&, bool>
+    {
+        bool operator() (const method_t& lhs,
+                         const method_t& rhs)
+        { return lhs.name < rhs.name; }
+    };
+};
+```
+
+方法名类型为`SEL`，方法类型`types`是个`char`指针，存储着方法的参数类型和返回值类型。
+
+`imp`指向了方法实现，其实是一个函数指针。
+
+#### Ivar
+
+```objective-c
+typedef struct ivar_t *Ivar;
+
+
+struct ivar_t {
+    int32_t *offset;
+    const char *name;
+    const char *type;
+    // alignment is sometimes -1; use alignment() instead
+    uint32_t alignment_raw;
+    uint32_t size;
+
+    uint32_t alignment() const {
+        if (alignment_raw == ~(uint32_t)0) return 1U << WORD_SHIFT;
+        return 1 << alignment_raw;
+    }
+};
+```
+
+
+
 # 参考
 
-[杨萧玉的blog](http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/)
+[杨萧玉的博客](http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/)
