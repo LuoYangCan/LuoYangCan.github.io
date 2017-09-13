@@ -64,7 +64,7 @@ ARC的机制可以用开关房间里的灯的事例来说明：
 
 
 
-我们可以用一下思路来看内存管理，不必去纠结引用计数
+我们可以用以下思路来看内存管理，不必去纠结引用计数
 
 - 自己生成的对象，自己持有。
 - 非自己生成的对象，自己也可以持有。
@@ -165,7 +165,7 @@ id obj = [NSMutableArray array];
 ```objective-c
 - (id) allocObject {
     //自己生成并持有
-  id obj = [[NSOBject alloc] init];
+  id obj = [[NSObject alloc] init];
   //自己持有对象
   return obj;
 }
