@@ -56,13 +56,133 @@ ARC的机制可以用开关房间里的灯的事例来说明：
 
 
 
+# 引用计数的储存
+
+objc中有些对象如果支持使用TaggedPointer，苹果会直接将其指针值作为引用计数返回。
+
+如果当前设备是64位环境并且使用objective-c 2.0，那么“一些”对象会使用其`isa`指针的一部分控件来存储它的引用计数。
+
+## TaggedPointer
+
+判断当前对象是否在使用TaggedPointer(观察标志位是否为1)
+
+```objective-c
+#if SUPPORT_MSB_TAGGED_POINTERS
+#   define TAG_MASK (1ULL<<63)
+#else
+#   define TAG_MASK 1
+
+inline bool 
+objc_object::isTaggedPointer() 
+{
+#if SUPPORT_TAGGED_POINTERS
+    return ((uintptr_t)this & TAG_MASK);
+#else
+    return false;
+#endif
+}
+```
+
+`Objc_object *`看似很陌生，其实它的简写就是我们常看到的`id`(`typedef struct objc_object *id;`)。它的`isTaggedPointer`方法经常会在操作引用计数时用到，因为这决定了存储引用计数的策略。
+
+## isa指针(NONPOINTER_ISA)
+
+用64 bit存储地址太浪费了，于是优化存储方案，用一部分额外空间存储其他内容。
+
+```objective-c
+union isa_t 
+{
+    isa_t() { }
+    isa_t(uintptr_t value) : bits(value) { }
+
+    Class cls;
+    uintptr_t bits;
+
+#if SUPPORT_NONPOINTER_ISA
+# if __arm64__
+#   define ISA_MASK        0x00000001fffffff8ULL
+#   define ISA_MAGIC_MASK  0x000003fe00000001ULL
+#   define ISA_MAGIC_VALUE 0x000001a400000001ULL
+    struct {
+        uintptr_t indexed           : 1;
+        uintptr_t has_assoc         : 1;
+        uintptr_t has_cxx_dtor      : 1;
+        uintptr_t shiftcls          : 30; // MACH_VM_MAX_ADDRESS 0x1a0000000
+        uintptr_t magic             : 9;
+        uintptr_t weakly_referenced : 1;
+        uintptr_t deallocating      : 1;
+        uintptr_t has_sidetable_rc  : 1;
+        uintptr_t extra_rc          : 19;
+#       define RC_ONE   (1ULL<<45)
+#       define RC_HALF  (1ULL<<18)
+    };
+
+# elif __x86_64__
+#   define ISA_MASK        0x00007ffffffffff8ULL
+#   define ISA_MAGIC_MASK  0x0000000000000001ULL
+#   define ISA_MAGIC_VALUE 0x0000000000000001ULL
+    struct {
+        uintptr_t indexed           : 1;
+        uintptr_t has_assoc         : 1;
+        uintptr_t has_cxx_dtor      : 1;
+        uintptr_t shiftcls          : 44; // MACH_VM_MAX_ADDRESS 0x7fffffe00000
+        uintptr_t weakly_referenced : 1;
+        uintptr_t deallocating      : 1;
+        uintptr_t has_sidetable_rc  : 1;
+        uintptr_t extra_rc          : 14;
+#       define RC_ONE   (1ULL<<50)
+#       define RC_HALF  (1ULL<<13)
+    };
+
+# else
+    // Available bits in isa field are architecture-specific.
+#   error unknown architecture
+# endif
+
+// SUPPORT_NONPOINTER_ISA
+#endif
+
+};
+```
+
+`SUPPORT_NONPOINTER_ISA`用于标记是否支持优化的`isa`指针。
+
+字面意思是`isa`的内容不再是类的指针了，还包含了更多的信息，例如引用计数，析构状态，被其他weak变量引用情况。
+
+```objective-c
+// Define SUPPORT_NONPOINTER_ISA=1 to enable extra data in the isa field.
+#if !__LP64__  ||  TARGET_OS_WIN32  ||  TARGET_IPHONE_SIMULATOR  ||  __x86_64__
+#   define SUPPORT_NONPOINTER_ISA 0
+#else
+#   define SUPPORT_NONPOINTER_ISA 1
+#endif
+```
+
+以下是`isa`指针中变量的对应含义
+
+| 变量名               | 含义                                      |
+| ----------------- | --------------------------------------- |
+| indexed           | 0表示普通的`isa`指针，1表示使用优化，存储引用计数            |
+| has_assoc         | 表示该对象是否包含associated object，如果没有，则析构时会更快 |
+| has_cxx_dtor      | 表示该对象是否有C++或者ARC的析构函数，如果没有，则析构时更快       |
+| shiftcls          | 类的指针                                    |
+| magic             | 固定值为0xd2，用于在调试时分辨对象是否未完成初始化。            |
+| weakly_referenced | 表示该对象是否有过`weak`对象，如果没有，则析构时更快           |
+| deallocating      | 表示该对象是否正在析构                             |
+| has_sidetable_rc  | 表示该对象的引用计数值是否过大无法存储在`isa`指针中            |
+| extra_rc          | 存储引用计数值减一后的结果                           |
+
+在64位环境下，优化的`isa`指针并不是就一定会存储引用计数，19bit的iOS系统保存引用计数不一定够，这19位保存的是引用计数值减一后的值。
+
+`has_sidetable_rc`的值如果为1，那么引用计数会存储在一个叫`SideTable`的类的属性中。
+
+## 散列表
+
+散列表来存储引用计数具体是用`DenseMap`类来实现，这个类中包含好多映射实例到其引用计数的键值对，并支持用`DenseMapIterator`迭代器快速查找遍历这些键值对。
 
 
 
-
----
-
-
+# iOS的内存管理
 
 我们可以用以下思路来看内存管理，不必去纠结引用计数
 
