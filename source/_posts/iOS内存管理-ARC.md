@@ -180,7 +180,152 @@ union isa_t
 
 散列表来存储引用计数具体是用`DenseMap`类来实现，这个类中包含好多映射实例到其引用计数的键值对，并支持用`DenseMapIterator`迭代器快速查找遍历这些键值对。
 
+键值对的格式：
 
+* 键的类型为`DisguisedPtr<objc_object>`，`DisguisedPtr`类是对`objc_object *`指针及其一些操作进行的封装，内容我们可以理解为对象的内存地址
+* 值的类型为`__darwin_size_t`。这里保存的值其实就是引用计数减一。
+
+用散列表保存引用计数的优势也很明显，即如果出现故障导致对象的内存块损坏，只要引用计数表没有被破坏，依然可以顺藤摸瓜找到内存块的地址。
+
+## 获取引用计数
+
+在非ARC环境，可以使用`retainCount`方法获取某个对象的引用计数，其会调用`objc_object`的`rootRetainCount()`方法：
+
+```objective-c
+- (NSUInteger)retainCount{
+    return ((id)self)->rootRetainCount();
+}
+```
+
+ARC时代除了使用Core Foundation库中的`CFGetRetainCount()`，也可以用Runtime的`_objc_rootRetainCount(id obj)`方法来获取引用计数，此时需要引入`<objc/runtime.h>`头文件。这个函数也是调用`objc_object`的`rootRetainCount()`方法：
+
+```objective-c
+inline uintptr_t 
+objc_object::rootRetainCount()
+{
+    assert(!UseGC);
+    if (isTaggedPointer()) return (uintptr_t)this;
+
+    sidetable_lock();
+    isa_t bits = LoadExclusive(&isa.bits);
+    if (bits.indexed) {
+        uintptr_t rc = 1 + bits.extra_rc;
+        if (bits.has_sidetable_rc) {
+            rc += sidetable_getExtraRC_nolock();
+        }
+        sidetable_unlock();
+        return rc;
+    }
+
+    sidetable_unlock();
+    return sidetable_retainCount();
+}
+```
+
+
+
+`rootRetainCount()`方法对引用计数存储逻辑进行了判断。
+
+除开`TaggedPointer`和`isa`指针的存储方式，会用`sidetable_retainCount()`方法：
+
+```objective-c
+uintptr_t
+objc_object::sidetable_retainCount()
+{
+    SideTable *table = SideTable::tableForPointer(this);
+
+    size_t refcnt_result = 1;
+    
+    spinlock_lock(&table->slock);
+    RefcountMap::iterator it = table->refcnts.find(this);
+    if (it != table->refcnts.end()) {
+        // this is valid for SIDE_TABLE_RC_PINNED too
+        refcnt_result += it->second >> SIDE_TABLE_RC_SHIFT;
+    }
+    spinlock_unlock(&table->slock);
+    return refcnt_result;
+}
+```
+
+`sidetable_retainCount()`方法的逻辑就是先从`SideTable`的静态方法获取当前实例对应的`SideTable`对象，其`refcnts`属性就是之前说的存储引用计数的散列表，这里将其类型简写为`RefcountMap`：
+
+```objective-c
+typedef objc::DenseMap<DisguisedPtr<objc_object>,size_t,true> RefcountMap;
+```
+
+然后引用计数表中用迭代器查找当前实例对应的键值对，获取引用计数值，并在此基础上加一返回。
+
+我们可以看到有一个`it->second >> SIDE_TABLE_RC_SHIFT`方法将键值对的值做了向右移位的操作
+
+```objective-c
+#ifdef __LP64__
+#   define WORD_BITS 64
+#else
+#   define WORD_BITS 32
+#endif
+
+// The order of these bits is important.
+#define SIDE_TABLE_WEAKLY_REFERENCED (1UL<<0)
+#define SIDE_TABLE_DEALLOCATING      (1UL<<1)  // MSB-ward of weak bit
+#define SIDE_TABLE_RC_ONE            (1UL<<2)  // MSB-ward of deallocating bit
+#define SIDE_TABLE_RC_PINNED         (1UL<<(WORD_BITS-1))
+
+#define SIDE_TABLE_RC_SHIFT 2
+#define SIDE_TABLE_FLAG_MASK (SIDE_TABLE_RC_ONE-1)RefcountMap
+```
+
+可以看出第一个bit表示该对象是否有过`weak`对象。
+
+第二个bit表示对象是否正在析构。
+
+第三个bit开始才是存储引用计数数值的地方。
+
+所以要向右移两位。
+
+可以用`SIDE_TABLE_RC_ONE`对引用计数+1和-1
+
+用`SIDE_TABLE_RC_PINNED`来判断是否引用计数值有可能溢出。
+
+
+
+`_objc_rootRetainCount(id obj)`对于已释放的对象以及不正确的对象地址，有时也返回 “1”。它所返回的引用计数只是某个给定时间点上的值，该方法并未考虑到系统稍后会把自动释放吃池清空，因而不会将后续的释放操作从返回值里减去。clang 会尽可能把 NSString 实现成单例对象，其引用计数会很大。
+
+如果使用了 TaggedPointer，NSNumber 的内容有可能就不再放到堆中，而是直接写在宽敞的64位栈指针值里。其看上去和真正的 NSNumber 对象一样，只是使用 TaggedPointer 优化了下，但其引用计数可能不准确。
+
+
+
+
+
+
+
+这里提一下`SideTable`，它用于管理引用计数表和`weak`表，并使用`spinlock_lock`自旋锁来防止操作表结构时可能的竞态条件。它用一个64*128大小的`uint8_t`静态数组保存所有`SideTable`实例，提供三个公有属性
+
+```objective-c
+spinlock_t slock; //保证原子操作
+RefcountMap refcnts; //保存引用计数的散列表
+weak_table_t weak_table;//保存weak引用的全局散列表
+```
+
+还有一个工厂方法
+
+```objective-c
+static SideTable *tableForPointer(const void *p)
+/** 根据对象的地址在buffer中寻找对应的SideTable实例 **/
+```
+
+`weak`表的作用是在对象执行`dealloc`的时候将所有指向该对象的`weak`指针的值设为`nil`，避免悬空指针。
+
+```objective-c
+//weak表的结构
+struct weak_table_t{
+    weak_entry_t *weak_entries;
+  size_t num_entries;
+  uintptr_t mask;
+  uintptr_t max_hash_displacement;
+};
+```
+
+苹果用一个全局`weak`表保存所有`weak`引用，将对象作为键，`weak_entry_t`作为值。`weak_entry_t`中保存了所有指向该对象的`weak`指针。
 
 # iOS的内存管理
 
@@ -348,4 +493,8 @@ id obj1 = [obj0 object];
 ```
 
 如以上例子，释放非自己持有的对象会造成程序崩溃，因此绝对不要去释放非自己持有的对象。
+
+# 参考
+
+[玉令天下的博客]( http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/)
 
