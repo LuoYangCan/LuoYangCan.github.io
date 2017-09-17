@@ -42,6 +42,8 @@ id obj = [[NSObject alloc] init];
 
 # Autorelease
 
+---
+
 其实在没有人工添加Autoreleasepool的情况下，Autorealease对象是在当前的`runloop`结束时释放的，而它能释放的原因也是系统在每个runloop中都加入了自动释放池push和pop。
 
 ```objective-c
@@ -77,8 +79,6 @@ __weak id reference = nil;
 ```
 
 ## AutoreleasePoolPage
-
----
 
 ARC下，我们用`@autoreleasepool{}`来使用一个AutoreleasePool，随后编译器会转化为这样
 
