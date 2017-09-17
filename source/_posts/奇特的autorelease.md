@@ -152,5 +152,5 @@ id *objc_autorelease(id obj){
 
 ---
 
-[sunnyxx的博客](blog.sunnyxx.com)
+[sunnyxx的博客](http://blog.sunnyxx.com)
 
