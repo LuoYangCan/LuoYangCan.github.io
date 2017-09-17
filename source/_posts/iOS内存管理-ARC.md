@@ -294,11 +294,7 @@ typedef objc::DenseMap<DisguisedPtr<objc_object>,size_t,true> RefcountMap;
 
 如果使用了 TaggedPointer，NSNumber 的内容有可能就不再放到堆中，而是直接写在宽敞的64位栈指针值里。其看上去和真正的 NSNumber 对象一样，只是使用 TaggedPointer 优化了下，但其引用计数可能不准确。
 
-
-
-
-
-
+**SideTable**
 
 这里提一下`SideTable`，它用于管理引用计数表和`weak`表，并使用`spinlock_lock`自旋锁来防止操作表结构时可能的竞态条件。它用一个64*128大小的`uint8_t`静态数组保存所有`SideTable`实例，提供三个公有属性
 
@@ -328,6 +324,98 @@ struct weak_table_t{
 ```
 
 苹果用一个全局`weak`表保存所有`weak`引用，将对象作为键，`weak_entry_t`作为值。`weak_entry_t`中保存了所有指向该对象的`weak`指针。
+
+## 修改引用计数
+
+### retain和release
+
+非ARC下，可用`retain`和`release`方法对引用计数进行加一减一操作，它们分别调用了`_objc_rootRetain(id obj)`和`_objc_rootRelease(id obj)`函数。后两者在ARC下也可以使用。
+
+最后这两个函数会调用`objc_object`的两个方法：
+
+```objective-c
+inline id 
+objc_object::rootRetain()
+{
+    assert(!UseGC);
+
+    if (isTaggedPointer()) return (id)this;
+    return sidetable_retain();
+}
+
+inline bool 
+objc_object::rootRelease()
+{
+    assert(!UseGC);
+
+    if (isTaggedPointer()) return false;
+    return sidetable_release(true);
+}
+```
+
+这个实现和获得引用计数类似，先是看是否支持`TaggedPointer`，否则就用`SideTable`里的`refcnts`。
+
+`sidetable_retain()`将引用计数加一后返回对象。
+
+`sidetable_release()`返回是否要执行`dealloc`方法
+
+```objective-c
+沙漠中怎么会有泥鳅  11:14:20
+bool 
+objc_object::sidetable_release(bool performDealloc)
+{
+#if SUPPORT_NONPOINTER_ISA
+    assert(!isa.indexed);
+#endif
+    SideTable *table = SideTable::tableForPointer(this);
+
+    bool do_dealloc = false;
+
+    if (spinlock_trylock(&table->slock)) {
+        RefcountMap::iterator it = table->refcnts.find(this);
+        if (it == table->refcnts.end()) {
+            do_dealloc = true;
+            table->refcnts[this] = SIDE_TABLE_DEALLOCATING;
+        } else if (it->second < SIDE_TABLE_DEALLOCATING) {
+            // SIDE_TABLE_WEAKLY_REFERENCED may be set. Don't change it.
+            do_dealloc = true;
+            it->second |= SIDE_TABLE_DEALLOCATING;
+        } else if (! (it->second & SIDE_TABLE_RC_PINNED)) {
+            it->second -= SIDE_TABLE_RC_ONE;
+        }
+        spinlock_unlock(&table->slock);
+        if (do_dealloc  &&  performDealloc) {
+            ((void(*)(objc_object *, SEL))objc_msgSend)(this, SEL_dealloc);
+        }
+        return do_dealloc;
+    }
+
+    return sidetable_release_slow(table, performDealloc);
+}
+```
+
+`it->second < SIDE_TABLE_DEALLOCATING`查看存储的引用计数是否为0，这也是为什么之前存储引用计数时存的是**真正的引用计数值减一后的值**，是为了防止负数的产生。
+
+如果查看存储的引用计数为0，则将对象标记为正在析构(`it->second |= SIDE_TABLE_DEALLOCATING`)，并发送`dealloc`消息，返回`YES`。
+
+否则将引用计数减一（`it->second -+ SIDE_TABLE_RC_ONE`)。
+
+Core Foundation库中也提供了增减引用计数的方法。
+
+```objective-c
+//CFBridgingRetain
+NS_INLINE CF_RETURNS_RETAINED CFTypeRef __nullable CFBridgingRetain(id __nullable X) {
+    return (__bridge_retained CFTypeRef)X;
+}
+//CFBridgingRelease
+NS_INLINE id __nullable CFBridgingRelease(CFTypeRef CF_CONSUMED __nullable X) {
+    return (__bridge_transfer id)X;
+}
+```
+
+`CFBridgingRetain`和`CFBridgingRelease`这两个方法本质是使用`__bridge_retained`和`__bridge_transfer`告诉编译器此处需要如何修改引用计数。
+
+除此之外，objc很多实现还是靠Runtime实现的，Objective-C Runtime源码中有些地方明确注明`//Replaced by CF`，意思就是说，这块任务被`Core Foundation`承包了。
 
 # iOS的内存管理
 
@@ -368,7 +456,31 @@ id obj2 = [NSObject new];
 
 `alloc`也可以用自定义的`init`方法(例如`initWithFrame`)而new只能用默认的init。
 
+```objective-c
+id
+_objc_rootAlloc(Class cls)
+{
+    return callAlloc(cls, false/*checkNil*/, true/*allocWithZone*/);
+}
++ (id)alloc {
+    return _objc_rootAlloc(self);
+}
++ (id)new {
+    return [callAlloc(self, false/*checkNil*/) init];
+}
+```
 
+看得出来`alloc`和`new`最终都会调用`callAlloc`，默认使用Objective-C 2.0且忽视垃圾回收和NSZone。
+
+后续调用顺序为：
+
+```objective-c
+class_createInstance()
+_class_createInstanceFromeZone()
+calloc()
+```
+
+`calloc()`函数相比于`malloc()`优点在于它将分配的内存区域初始化为0，相当于`malloc()`后再`memset()`方法再初始化一次。
 
 ### copy
 
