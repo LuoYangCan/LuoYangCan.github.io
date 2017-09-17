@@ -421,7 +421,7 @@ NS_INLINE id __nullable CFBridgingRelease(CFTypeRef CF_CONSUMED __nullable X) {
 
 ---
 
-我们可以用以下思路来看内存管理，不必去纠结引用计数
+引用计数机制是有些复杂，但是设计到内存管理的话，我们其实不必过多纠结引用计数，直接用以下思路来看待会好一些：
 
 - 自己生成的对象，自己持有。
 - 非自己生成的对象，自己也可以持有。
