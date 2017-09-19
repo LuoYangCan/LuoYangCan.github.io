@@ -54,7 +54,18 @@ ARC的机制可以用开关房间里的灯的事例来说明：
 | 释放对象    | release方法                     |
 | 废弃对象    | dealloc方法                     |
 
+## ARC规则
 
+在ARC有效的情况下编译源代码，需要遵守一定的规则：
+
+* 不能使用/retain/release/retainCount/autorelease
+* 不能使用NSAllocateObject/NSDeallocateObject
+* 须遵守内存管理的方法命名规则
+* 不要显式调用dealloc（别用[super dealloc]）
+* 使用@autoreleasepool块替代NSAutoreleasePool
+* 不能使用NSZone
+* 对象型变量不能作为C语言结构体(struct/union)的成员
+* 转换id和void *(__bridge)
 
 # 引用计数的储存
 
