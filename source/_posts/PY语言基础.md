@@ -1,6 +1,6 @@
 ---
 title: PY语言基础
-date: 2017-09-20 22:16:40
+date: 2017-09-21 16:44:40
 tags: [Python]
 ---
 
@@ -193,6 +193,124 @@ Python是一门动态语言，变量本身类型不固定。我们可以把任�
 Python中常量一般都是全部大写。
 
 事实上Python没有任何机制保证常量不会改变。所以全部大写常量名字只是一种习惯。
+
+## list与tuple
+
+### list
+
+Python中有列表`list`这种数据类型，是有序的集合，可以随时添加删除期中的元素。有点像objc中的MutableArray
+
+```python
+//list
+>>> classmates = ['Reus', 'Reus1', 'Rues2']
+>>> classmates 
+['Reus', 'Reus1', 'Reus2']
+//空list
+>>> c = []
+```
+
+我们可以用`len()`获得list元素的个数
+
+```python
+>>> len(classmates)
+3
+>>> len(c)
+0
+```
+
+还可以用索引访问list的元素，甚至还可以直接获取倒数得到的数据
+
+```python
+>>> classmates[0]
+'Reus'
+>>> classmates[1]
+'Reus1'
+
+//溢出
+>>> classmates[3]
+Traceback (most recent call last):
+  File"<stdin>". line 1, in <module>
+IndexError: list index out of range
+  
+//查看最后一个元素
+>>> classmates[-1]
+'Reus2'
+//倒数第二个
+>>> classmates[-2]
+'Reus1'
+//越界溢出
+>>> classmates[-4]
+Traceback (most recent call last):
+  File"<stdin>". line 1, in <module>
+IndexError: list index out of range
+
+  //追加元素
+>>> classmates.append('Boy')
+>>> classmates
+['Reus', 'Reus1', 'Reus2', 'Boy']
+
+//插入元素到指定位置
+>>> classmates.insert(1,'May')
+['Reus', 'May', 'Reus1', 'Reus2', 'Boy']
+
+//删除末尾元素
+>>> classmates.pop()
+'Boy'
+>>> classmates 
+['Reus', 'May', 'Reus1', 'Reus2']
+
+//删除指定位置元素
+>>> classmates.pop(1)
+'May'
+>>> classmates
+['Reus', 'Reus1', 'Reus2']
+
+//替换元素
+>>> classmates[1] = 'Boy'
+>>> classmates
+['Reus', 'Boy', 'Reus2']
+
+```
+
+`list`里的数据类型也可以不同，可以是整型，可以是字符串，还可以是布尔值
+
+```python
+>>> L = ['Apple', 123, True]
+```
+
+也可以是另一个list
+
+```python
+>>> M = [1, 2, [3, 4], 5]
+>>> len(M)
+4
+```
+
+### tuple
+
+tuple和list非常相似，但是tuple一旦初始化就不能修改（除非里面有个list)。有点像objc中的NSArray
+
+因为tuple不可变，所以相对来说是更安全的。
+
+```python
+//定义tuple
+>>> t = (1,2)
+>>> t
+(1, 2)
+
+//定义一个空的tuple
+>>> t =()
+>>> t 
+()
+
+//定义一个元素的tuple
+>>> t = (1,)
+>>> t 
+(1,)
+/**Python在显示只有一个的tuple时，也会加一个逗号，防止我们误解成数学上的括号**/
+```
+
+
 
 # 参考
 
