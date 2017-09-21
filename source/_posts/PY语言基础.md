@@ -2,7 +2,6 @@
 title: PY语言基础
 date: 2017-09-20 22:16:40
 tags: [Python]
-mathjax: true
 ---
 
 # 前言
