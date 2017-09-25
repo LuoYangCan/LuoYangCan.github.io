@@ -1,6 +1,6 @@
 ---
 title: PY语言基础
-date: 2017-09-21 23:04:40
+date: 2017-09-24 23:04:40
 tags: [Python]
 ---
 
@@ -373,7 +373,86 @@ while n > 0:      //只要条件为真就一直循环
 print(sum)
 ```
 
+# dict和set
 
+## dict
+
+Python内置了字典，也就是dict(dictionary)。和objc一样，使用键-值(key-value)存储。
+
+```python
+>>> d = {'Michael':95, 'Bob':75, 'Tracy':85}
+>>> d['Michael']
+95
+
+
+>>> d['Adam'] = 67
+>>> d['Adam']
+67
+```
+
+一个key只对应一个value没所以多次对一个key放入value，后面的值会覆盖掉前面。
+
+```python
+>>> d['jack'] = 90
+>>> d['jack'] 
+90
+>>> d['jack'] = 88
+>>> d['jack']
+88
+
+//检查key是否存在
+>>> 'Thomas' in d
+False
+
+>>> d.get('Thomas')      //可返回None(交互命令行不显示结果)
+>>> d.get('Thomas',-1)	//或者自己写的value
+-1
+```
+
+dict内部存放的顺序和key放入的顺序没有关系。
+
+dict的key必须是不可变对象
+
+## set
+
+set和dict类似，也是一组key的集合，但是不存value。
+
+```python
+>>> s = set([1, 2, 3])
+>>> s
+{1, 2, 3}
+//因为key不能重复，所以set中重复元素自动被过滤
+>>> s = set{[1, 1, 2, 2, 3, 3]}
+>>> s 
+{1, 2, 3}
+
+//添加元素
+>>> s.add(4)
+>>> s 
+{1, 2, 3, 4}
+>>> s.add(4)
+>>> s 
+{1, 2, 3, 4}
+
+
+//删除元素
+>>> s.remove(4)
+>>> s
+{1, 2, 3}
+```
+
+set可看成数学意义上的无序无重复元素的集合，所以两个st可以做交并集等操作
+
+```python
+>>> s1 = set([1, 2, 3])
+>>> s2 = set([2, 3, 4])
+>>> s1 & s2
+{2, 3}
+>>> s1 | s2
+{1, 2, 3, 4}
+```
+
+**set同样不能放入可变对象**
 
 # 参考
 
