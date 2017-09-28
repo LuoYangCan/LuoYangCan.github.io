@@ -454,6 +454,69 @@ set可看成数学意义上的无序无重复元素的集合，所以两个st可
 
 **set同样不能放入可变对象**
 
+# 函数
+
+## 调用函数
+
+Python内置了很多函数，我们可以直接调用(比如绝对值函数abs)
+
+```python
+//调用abs函数
+>>> abs(100)
+100
+>>> abs(-20)
+20
+```
+
+如果传入的参数不对，会报`TypeError`的错误
+
+```python
+//数据类型转换
+>>> int(12.34)
+12
+>>> str(1.23)
+'1.23'
+
+//把函数名赋给变量
+>>> a = abs
+>>> a(-1)
+1
+```
+
+## 定义函数
+
+在Python中，定义一个函数要使用`def`语句，依次写出函数名、括号、括号中的参数和冒号，最后，在缩进块中编写函数体，用`return`返回。
+
+```python
+//自定义函数
+def my_abs(x):
+  if x >= 0:
+    return x
+  else:
+    return -x
+```
+
+如果我们把`my_abs()`的函数定义保存为`abstest.py`，那么，可以在该目录下启动Python解释器。用`from abstest import my_abs`来导入`my_abs()`函数
+
+```python
+//定义空函数
+def nop():
+  pass
+```
+
+`pass`可用来做占位符，比如我们还没想好写什么，可以先放一个`pass`让代码跑起来
+
+**Python是可以返回多个值的**
+
+```python
+def move(x, y, step, angle=0):
+  nx = x + step * math.cos(angle)
+  ny = y - step * math.sin(angle)
+  return nx, ny
+```
+
+其实返回的值并不是严格意义上的多值，而是一个tuple。
+
 # 参考
 
 ---
