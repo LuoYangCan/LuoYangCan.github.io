@@ -1,6 +1,6 @@
 ---
 title: 关于@property
-date: 2017-10-11 21:59:48
+date: 2017-10-18 21:59:48
 tags: iOS
 ---
 
@@ -51,6 +51,44 @@ tags: iOS
 - (void)setLastName:(NSString *)lastName;
 @end
 ```
+
+## @property属性关键字
+
+属性可拥有的特质分为四类：
+
+* 原子性 —— `nonatomic`
+
+  在默认情况下，由编译器合成的方法会通过锁定机制确保原子性(atomicity)。如果属性具备`nonatomic`特质，则不使用自旋锁。请注意，尽管没有名为"atomic"的特质(如果某属性不是`nonatomic`，那他就是原子的`atomic`)。
+
+
+
+* 读写权限 ——`readwrite(读写)`、`readonly(只读)`
+
+* 内存管理 ——`assign`、`strong`、`weak`、`unsafe_unretained`、`copy`
+
+* 方法名 ——`getter = <name>`、`setter = <name>` 
+
+  `getter = <name>`的样式：
+
+  ```objective-c
+  @property (nonatomic, getter = isOn) BOOL on;
+  ```
+
+  `setter = <name>`一般用在特殊环境下，比如：
+
+  在数据反序列化、转模型的过程中，服务器返回的字段以`init`开头，所以你需要定义一个`init`开头的属性，但默认生成的`getter`和`setter`方法也会以`init`开头。但是编译器会把`init`开头的方法当成初始化方法，而初始化方法只能返回self，所以编译器会报错。
+
+  这时候我们就要用到`setter = <name>`来防止编译器报错
+
+  ```objective-c
+  @property(nonatomic, strong, getter=p_initBy, setter=setP_initBy:)NSString *initBy;
+
+  //对关键字特殊说明
+  @property(nonatomic, readwrite, copy, null_resettable) NSString *initBy;
+  - (NSString *)initBy __attribute__((objc_method_family(none)));
+  ```
+
+* 不常用的`nonnull`、`null_resettable`、`nullable`
 
 ## ivar
 
