@@ -888,7 +888,3 @@ NSLog(@"class = %@",[tmp class]);
 
 这里要特别说明的是，id的指针或者对象的指针在没有显示指定时会被附上__autoreleasing修饰符。
 
-# 参考
-
-[玉令天下的博客]( http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/)
-
