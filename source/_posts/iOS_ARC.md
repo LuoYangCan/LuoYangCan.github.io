@@ -621,6 +621,273 @@ id obj1 = [obj0 object];
 
 如以上例子，释放非自己持有的对象会造成程序崩溃，因此绝对不要去释放非自己持有的对象。
 
+# 所有权修饰符
+
+Objc为了处理对象，可将变量类型定义为id类型或各种对象类型。
+
+所谓对象类型就是指向NSObject这样的Objective-C类的指针，例如"NSObject *"。id类型用于隐藏对象类型的类名部分，相当于C语言中常用的"void *"
+
+ARC有效时，id类型和对象类型同C语言其他类型不同，其类型上必须附有**所有权修饰符**。
+
+**所有权修饰符**一共有4种：
+
+* __strong 修饰符
+* __weak 修饰符
+* __ unsafe_unretained 修饰符
+
+### __strong 修饰符
+
+__strong修饰符是id类型和对象类型默认的所有权修饰符。也就是说以下源代码中的id变量，实际上被附加了所有权修饰符
+
+```objective-c
+id obj = [[NSObject alloc]init];
+//等价于
+id __strong obj = [[NSObject alloc] init];
+```
+
+ARC无效时，则这样表述
+
+```objective-c
+id obj = [[NSObject alloc] init];
+```
+
+这段代码表面上无任何变化，再看一下下面的代码
+
+```objective-c
+{
+  id __strong obj = [[NSObject alloc] init];
+}
+```
+
+此源代码制定了C语言的变量的作用域。ARC无效时，该源码可记为：
+
+```objective-c
+//ARC无效
+{
+    id obj = [[NSObject alloc] init];
+  [obj release];
+}
+```
+
+为了释放生成并持有的对象，增加调用release方法的代码。该源码进行的动作同先前ARC有效时的动作完全一样。
+
+如此源码所示，附有__strong修饰符的变量obj在超出其变量作用域时，即在该变量被废弃时，会释放其被赋予的对象。
+
+__strong修饰符表示对对象的”强引用”。持有强引用的变量在超出其作用域时被废弃，随着强引用的失效，引用的对象会随之释放。
+
+上文中的代码是自己生成自己持有的情况，那么在取得非自己生成并持有的对象时又会如何？
+
+```objective-c
+{
+  //取的非自己生成并持有的对象
+    id __strong obj = [NSMutableArray array];
+	//变量obj为强引用，所以自己持有
+}
+//超出作用域，强引用失效
+//自动释放自己持有的对象
+```
+
+__strong修饰的变量，不仅只在变量作用域中，在赋值上也能正确管理其对象的所有者。
+
+另外，\_\_strong修饰符同后面要说到的\_\_weak修饰符和\_\_autoreleasing修饰符一起，可以保证将附有这些修饰符的自动变量初始化为nil。
+
+```objective-c
+id __strong obj0;
+id __weak obj1;
+id __autoreleasing obj2;
+//等价于
+id __strong obj0 = nil;
+id __weak obj1 = nil;
+id __autoreleasing obj2 = nil;
+```
+
+### __weak修饰符
+
+看起来好像通过__strong修饰符，编译器就可以完美进行内存管理，但是事实却并非如此。
+
+使用引用计数式内存管理中必然会发生“循环引用”问题，而光靠__strong是无法解决这一重大问题的。
+
+```objective-c
+@interface Test : NSObject
+{
+    id __strong obj_;
+}
+- (void)setObject:(id __strong)obj;
+@end
+  
+@implementation Test
+- (id)init{
+    self = [super init];
+  return self;
+}
+- (void)setObject:(id __strong)obj
+{
+    obj_  = obj;
+}
+//以下为循环引用
+{
+id test0 = [[Test alloc] init];/*对象A*/
+//test0持有Test对象A的强引用
+id test1 = [[Test alloc] init];/*对象B*/
+//test1持有Test对象B的强引用
+[test0 setObject:test1];
+//Test对象A的obj_成员变量持有Test对象B的强引用。
+
+//此时持有Test对象B的强引用的变量为
+//Test对象A的obj_和test1。
+[test1 setObject:test2];
+//Test对象B的obj_成员变量持有Test对象A的强引用。
+
+//此时，持有Test对象A的强引用变量为
+//Test对象B的obj_和test0。
+}
+//因为test0变量超出作用域，强引用失效
+//自动释放Test对象A
+//因为test1变量超出作用域，强引用失效
+//自动释放Tst对象B
+
+//此时，持有Test对象A的强引用变量为Test对象B的obj_
+//持有Test对象B的强引用变量为Test对象A的obj_
+
+//内存泄漏!!
+
+
+//以下是对自身强引用导致的循环引用
+id test = [[Test alloc] init];
+[test setObject:test];
+```
+
+这个时候就需要__weak修饰符出场了。\_\_weak修饰符和\_\_strong相反，提供弱引用。弱引用不能持有对象实例。
+
+首先需要声明的是，__weak不能用来直接声明变量
+
+```objective-c
+id __weak obj = [[NSObject alloc] init];
+//会提示以下错误
+warning: assigning retained obj to weak variable; obj will be       released after assignment [-Warc-unsafe-retained-assign]
+  id __weak obj = [[NSObject alloc] init];
+            ^     ~~~~~~~~~~~~~~~~~~~~~~~
+```
+
+以上代码会导致生成的对象立即释放(因为弱引用并不持有对象)。如果像以下这种情况的话，就没有警告了
+
+```objective-c
+id __strong obj0 = [[NSObject alloc ] init];
+id __weak obj1 = obj0;
+//解决上一例子中循环引用问题
+@interface Test : NSObject
+{
+    id __weak obj_;
+}
+- (void)setObject:(id __strong)obj;
+@end
+```
+
+__weak修饰符还有一个优点——在持有某对象的弱引用时，若该对象被废弃，则弱引用自动失效且置为nil：
+
+```objective-c
+id __weak obj1 = nil;
+{
+    id __strong obj0 = [[NSObject alloc] init];
+  obj1 = obj0;
+  NSLog(@"A:%@",obj1);
+}
+NSLog(@"B:%@",obj1);
+//结果如下
+A: <NSObject: 0x753e180>
+B: (null)
+```
+
+像这样，使用__weak修饰符可避免循环引用。通过检查有\_\_weak修饰符修饰的变量是否为nil，可判断被赋值对象是否被废弃。
+
+__weak修饰符只能用于iOS5以上以及OS X Lion以上版本的应用程序。在之前的版本可用\_\_unsafe_unretained修饰符来代替。
+
+### __unsafe_unretained修饰符
+
+__unsafe_unretained修饰符是不安全的所有权修饰符。它不属于编译器的内的存管理对象。
+
+它也与__weak一样，不能直接生成变量，但是它也有不同的地方
+
+```objective-c
+id __unsafe_unretained obj1 = nil;
+{  //自己生成并持有对象
+    id __strong obj0 = [[NSObject alloc] init];
+  //obj0变量为强引用，所以自己持有对象
+  obj1 = obj0;
+  //虽然obj0变量赋值给obj1
+  //但是obj1变量既不持有对象的强引用也不持有弱引用
+  NSLog(@"A: %@",obj1);
+  //输出obj1变量表示的对象
+}
+//obj0超出作用域，强引用失效
+//自动释放自己持有的对象
+//对象无持有者，废弃
+
+NSLog(@"B: %@",obj1);
+//结果为
+A: <NSObject: 0x753e180>
+B: <NSObject: 0x753e180>
+//输出obj1变量表示的对象
+  //obj1变量表示的对象
+  //已经被废弃(悬垂指针)
+  //错误访问
+```
+
+也就是说，最后一行NSLog只是碰巧运行而已，虽然访问了已经被废弃的对象，但是应用程序在个别运行情况下才会崩溃。我想这也是它为什么不成为不安全(unsafe)的修饰符的原因了吧。
+
+在使用__unsafe_unretained修饰符时，赋值给附有\_\_strong修饰符的变量时有必要确保被赋值对象确实存在。
+
+###__autoreleasing修饰符
+
+ARC有效时不能使用autorelease方法，也不能使用NSAutoreleasePool类。
+
+那么我们用autoreleas的方法就有所不同
+
+```objective-c
+//ARC无效
+NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+id obj = [NSObject alloc] init];
+[obj autorelease];
+[pool drain];
+//ARC有效
+@autoreleasepool{
+    id __autoreleasing obj = [[NSObject alloc] init];
+}
+```
+
+从以上代码可以看出，我们用`@autorelease`块来替代`NSAutoreleasePool`类对象生成、持有以及放弃这一范围。
+
+另外ARC有效时，要通过将对象赋值给附加了__autoreleasing修饰符的变量来替代调用autorelease方法。即对象被注册到autoreleasepool。
+
+ 在取得非自己生成并持有的对象时，
+
+虽然可以用alloc/new/copy/mutableCopy以外的方法来获得对象，但该对象已被注册到了autoreleasepool。由于编译器会检查方法是否以alloc/new/copy/mutableCopy开始，如果不是则自动将返回值注册到autoreleasepool。
+
+```objective-c
++ (id) array{
+    id obj = [[NSMutableArray alloc] init];
+  return obj;
+}
+//因为return使对象变量超出其作用域，所以该强引用持有的对象会被自动释放。
+//作为返回值，编译器会自动将该对象注册到autoreleasepool
+
+```
+
+以下为使用__weak修饰符的例子，虽然\_\_weak修饰符是为了避免循环引用而使用的，但在访问附有\_\_weak修饰符的变量时，实际上必定要访问注册到autoreleasepool的对象。
+
+```objective-c
+id __weak obj1 = obj0;
+NSLog(@"class = %@",[obj class]);
+//等价于
+id __weak obj1 = obj0;
+id __autoreleasing tmp = obj1;
+NSLog(@"class = %@",[tmp class]);
+```
+
+因为__weak修饰符支持有对象的弱引用，在访问引用对象的过程中，该对象有可能被废弃。把它注册到autoreleasepool中后，在@autoreleasepool块结束之前都能确保该对象存在。
+
+这里要特别说明的是，id的指针或者对象的指针在没有显示指定时会被附上__autoreleasing修饰符。
+
 # 参考
 
 [玉令天下的博客]( http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/)
