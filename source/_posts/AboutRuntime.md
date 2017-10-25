@@ -235,27 +235,7 @@ struct class_data_bits_t {
 
 在`class_data_bits_t`里又包含了一个`bits`，这个指针跟不同的`FAST_`前缀的掩码做按位与操作，可获得不同的数据。`bits`在内存中每个位的含义有三种排列顺序：
 
-32位：
-
-| 0             | 1                   | 2-31           |
-| ------------- | ------------------- | -------------- |
-| FAST_IS_SWIFT | FAST_HAS_DEFAULT_RR | FAST_DATA_MASK |
-
-64位兼容版：
-
-| 0             | 1                   | 2                     | 3-46           | 47-63 |
-| ------------- | ------------------- | --------------------- | -------------- | ----- |
-| FAST_IS_SWIFT | FAST_HAS_DEFAULT_RR | FAST_REQUIRES_RAW_ISA | FAST_DATA_MASK | 空闲    |
-
-64位不兼容：
-
-| 0                    | 1                     | 2                | 3-46                    | 47                |
-| -------------------- | --------------------- | ---------------- | ----------------------- | ----------------- |
-| FAST_IS_WIFT         | FAST_REQUIRES_RAW_ISA | FAST_HAS_CXXDTOR | FAST_DATA_MASK          | FAST_HAS_CXX_CTOR |
-| 48                   | 49                    | 50               | 51                      | 52-63             |
-| FAST_HAS_DEFAULT_AWZ | FAST_HAS_DEFAULT_RR   | FAST_ALLOC       | FAST_SHIFTED_SIZE_SHIFT | 空闲                |
-
-
+![class_data_bits_t](/img/class_data_bits_t.png)
 
 64位不兼容中每个宏对应含义如下:
 
