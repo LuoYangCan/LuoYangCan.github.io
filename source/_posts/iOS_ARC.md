@@ -837,7 +837,11 @@ B: <NSObject: 0x753e180>
 
 在使用__unsafe_unretained修饰符时，赋值给附有\_\_strong修饰符的变量时有必要确保被赋值对象确实存在。
 
+
+
 ###__autoreleasing修饰符
+
+
 
 ARC有效时不能使用autorelease方法，也不能使用NSAutoreleasePool类。
 
