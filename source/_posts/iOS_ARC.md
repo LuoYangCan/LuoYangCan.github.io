@@ -735,7 +735,7 @@ id test1 = [[Test alloc] init];/*对象B*/
 
 //此时持有Test对象B的强引用的变量为
 //Test对象A的obj_和test1。
-[test1 setObject:test2];
+[test1 setObject:test0];
 //Test对象B的obj_成员变量持有Test对象A的强引用。
 
 //此时，持有Test对象A的强引用变量为
@@ -744,7 +744,7 @@ id test1 = [[Test alloc] init];/*对象B*/
 //因为test0变量超出作用域，强引用失效
 //自动释放Test对象A
 //因为test1变量超出作用域，强引用失效
-//自动释放Tst对象B
+//自动释放Test对象B
 
 //此时，持有Test对象A的强引用变量为Test对象B的obj_
 //持有Test对象B的强引用变量为Test对象A的obj_
