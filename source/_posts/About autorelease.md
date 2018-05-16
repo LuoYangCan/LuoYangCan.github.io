@@ -104,7 +104,7 @@ uint32_t hiwat;
 
 class AutoreleasePoolPage{
 	static inline void *push() //相当于生成或持有NSAutoreleasePool对象；
-	static inline void *pop(void *token) //相当于飞起NSAutoreleasePool类对象
+	static inline void *pop(void *token) //相当于废弃NSAutoreleasePool类对象
 	id *add(id obj) //将对象追加到内部数组中
     void releaseAll()//调用内部数组中对象的release实例方法
 }
@@ -133,16 +133,16 @@ id *objc_autorelease(id obj){
 
 ## 释放
 
-每当进行一次`objc_autoreleasePoolPush`时，runtime向当前的AutoreleasePoolPage中add进一个`哨兵对象`，值为0，`objc_autoreleasePoolPush`的返回值正是这个哨兵对象的地址，被`objc_autoreleasePoolPop(哨兵对象)`作为入参。
+每当进行一次`objc_autoreleasePoolPush`时，runtime 向当前的 AutoreleasePoolPage 中 add 进一个`哨兵对象`，值为0，`objc_autoreleasePoolPush`的返回值正是这个哨兵对象的地址，被`objc_autoreleasePoolPop()`作为入参变成`objc_autoreleasePoolPop(哨兵对象)`。
 
-所以 Runtime 会
+所以每次需要释放的时候 Runtime 会
 
 * 根据传入的哨兵对象地址找到哨兵对象所处的 page
 * 在当前 page 中将晚于哨兵对象插入的所有 autorelease 发送一次`-release`消息，并向回移动`next`到正确位置
 
 ### 嵌套AutoreleasePool
 
-因为上面也讲到了，pop 的时候总是会释放到上次的 push 位置为止，多层嵌套也就是多个哨兵对象，一层一层的释放，互不影响。
+因为上面也讲到了，pop 的时候总是会释放到上次的 push 位置为止，而且AutoreleasePool 也只是双向链表，多层嵌套也就是插入了多个哨兵对象，一层一层一个哨兵一个哨兵的释放，就能做到互不影响。
 
 
 

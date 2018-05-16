@@ -634,6 +634,7 @@ ARC有效时，id类型和对象类型同C语言其他类型不同，其类型�
 * __strong 修饰符
 * __weak 修饰符
 * __ unsafe_unretained 修饰符
+* __autoreleasing修饰符
 
 ### __strong 修饰符
 
@@ -839,7 +840,7 @@ B: <NSObject: 0x753e180>
 
 
 
-###__autoreleasing修饰符
+### __autoreleasing修饰符
 
 
 
