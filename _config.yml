@@ -80,6 +80,9 @@ deploy:
   type: git
   repository: git@github.com:LuoYangCan/LuoYangCan.github.io.git
   branch: master
+##Aplayer
+aplayer:
+  meting: true
 
 #插件配置
 ##Plugins: http://hexo.io/plugins/
