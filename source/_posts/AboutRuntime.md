@@ -10,7 +10,7 @@ tags: [iOS,runtime]
 
 Runtime 和消息发送机制是理解 iOS 运行过程避不开的一道坎，虽然平时很少用，但是却是我们 Objc 程序员需要了解的。
 
-
+​	<!-- more -->
 
 # Runtime
 

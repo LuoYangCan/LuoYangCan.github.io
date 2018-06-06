@@ -8,7 +8,7 @@ tags: [RAC,iOS]
 
 ​	最近做了一个蓝牙相关的项目，项目的前辈当时是用的ReactiveCocoa（RAC）做的，才开始接手的时候，看的一头雾水。经过一段时间自学，现在对RAC略知一二。
 
-
+​	<!-- more -->
 
 ## FunctionalReactiveProgramming
 
