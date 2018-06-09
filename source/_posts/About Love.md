@@ -32,7 +32,7 @@ tags: 读书
 
 　　自然，也不能被伪善之人表面的深情所欺骗。
 
-{% aplayer "奇妙能力歌" "陈粒" "http://m10.music.126.net/20180607002713/fc30bc3c313f9fb82c1a223e078abb94/ymusic/63e6/c919/3a38/0921acd6c5db882c7157c442235de51e.mp3" "http://p1.music.126.net/VuJFMbXzpAProbJPoXLv7g==/7721870161993398.jpg" "autoplay"%}
+{% aplayer "奇妙能力歌" "陈粒" "http://m10.music.126.net/20180610000902/44918fc23fff46f6aedaede7466b7348/ymusic/63e6/c919/3a38/0921acd6c5db882c7157c442235de51e.mp3" "http://p1.music.126.net/VuJFMbXzpAProbJPoXLv7g==/7721870161993398.jpg" "autoplay"%}
 
 
 
