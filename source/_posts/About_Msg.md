@@ -73,6 +73,8 @@ int main(int argc, const char * argv[]){
 
 如果未知消息是一个了类方法而非实例方法，则会调用`resolveClassMethod`方法
 
+
+
 ## 重定向
 
 动态解析失败，则调用这个方法
@@ -82,9 +84,11 @@ int main(int argc, const char * argv[]){
     //返回一个能响应该选择子的 “备胎”对象
 ```
 
+在这个方法我们可以实现偷天换日，把这个消息发到其他类去实现。
 
 
-##消息签名
+
+## 消息签名
 
 “备胎”搞不定，这个方法就要被包装成一个`NSInvocation`对象，在这里要先返回一个消息签名
 
@@ -92,6 +96,10 @@ int main(int argc, const char * argv[]){
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
     //NSMethodSignature : 该sleector对应的方法签名
 ```
+
+
+
+
 
 ## 完整的消息转发
 
