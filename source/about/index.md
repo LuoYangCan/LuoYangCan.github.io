@@ -1,5 +1,6 @@
 ---
 title: 关于我
+comments: false
 ---
 
 - iOS开发
