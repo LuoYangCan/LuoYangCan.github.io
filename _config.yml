@@ -7,7 +7,7 @@ title: 阿灿的大树洞
 subtitle: 物极必反，否极泰来
 description: 纸上得来终觉浅，绝知此事要躬行
 author: Reus
-language: zh-Hans
+language: zh-CN
 timezone:
 
 # URL
@@ -72,7 +72,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: NexT
+theme: next-reloaded
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
