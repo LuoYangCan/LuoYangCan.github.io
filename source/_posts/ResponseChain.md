@@ -163,7 +163,7 @@ UIEvent 记录着时间产生的时刻和类型，一个事件对应一个 UIEve
 UIView 不接受触摸事件的话一般是一下三种情况
 
 * userInteractionEnabled = NO
-* hidden = YEs
+* hidden = YES
 * alpha < 0.01
 
 
@@ -188,7 +188,9 @@ UIView 提供了两个方法来寻找最合适的 view
 
 　　所以我们可以通过重写`hitTest: withEvent:`返回指定 view，从而达到拦截事件的效果。
 
+Like This
 
+![重写HitTest](/img/hitTest.jpg)
 
 接下来，我们图解一下传递过程
 
