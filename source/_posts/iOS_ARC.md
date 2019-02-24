@@ -81,7 +81,7 @@ objc中有些对象如果支持使用TaggedPointer，苹果会直接将其指针
 
 判断当前对象是否在使用TaggedPointer(观察标志位是否为1)
 
-```objective-c
+```objc
 #if SUPPORT_MSB_TAGGED_POINTERS
 #   define TAG_MASK (1ULL<<63)
 #else
@@ -104,7 +104,7 @@ objc_object::isTaggedPointer()
 
 用64 bit存储地址太浪费了，于是优化存储方案，用一部分额外空间存储其他内容。
 
-```objective-c
+```objc
 union isa_t 
 {
     isa_t() { }
@@ -164,7 +164,7 @@ union isa_t
 
 字面意思是`isa`的内容不再是类的指针了，还包含了更多的信息，例如引用计数，析构状态，被其他weak变量引用情况。
 
-```objective-c
+```objc
 // Define SUPPORT_NONPOINTER_ISA=1 to enable extra data in the isa field.
 #if !__LP64__  ||  TARGET_OS_WIN32  ||  TARGET_IPHONE_SIMULATOR  ||  __x86_64__
 #   define SUPPORT_NONPOINTER_ISA 0
@@ -206,7 +206,7 @@ union isa_t
 
 在非ARC环境，可以使用`retainCount`方法获取某个对象的引用计数，其会调用`objc_object`的`rootRetainCount()`方法：
 
-```objective-c
+```objc
 - (NSUInteger)retainCount{
     return ((id)self)->rootRetainCount();
 }
@@ -214,7 +214,7 @@ union isa_t
 
 ARC时代除了使用Core Foundation库中的`CFGetRetainCount()`，也可以用Runtime的`_objc_rootRetainCount(id obj)`方法来获取引用计数，此时需要引入`<objc/runtime.h>`头文件。这个函数也是调用`objc_object`的`rootRetainCount()`方法：
 
-```objective-c
+```objc
 inline uintptr_t 
 objc_object::rootRetainCount()
 {
@@ -243,7 +243,7 @@ objc_object::rootRetainCount()
 
 除开`TaggedPointer`和`isa`指针的存储方式，会用`sidetable_retainCount()`方法：
 
-```objective-c
+```objc
 uintptr_t
 objc_object::sidetable_retainCount()
 {
@@ -264,7 +264,7 @@ objc_object::sidetable_retainCount()
 
 `sidetable_retainCount()`方法的逻辑就是先从`SideTable`的静态方法获取当前实例对应的`SideTable`对象，其`refcnts`属性就是之前说的存储引用计数的散列表，这里将其类型简写为`RefcountMap`：
 
-```objective-c
+```objc
 typedef objc::DenseMap<DisguisedPtr<objc_object>,size_t,true> RefcountMap;
 ```
 
@@ -272,7 +272,7 @@ typedef objc::DenseMap<DisguisedPtr<objc_object>,size_t,true> RefcountMap;
 
 我们可以看到有一个`it->second >> SIDE_TABLE_RC_SHIFT`方法将键值对的值做了向右移位的操作
 
-```objective-c
+```objc
 #ifdef __LP64__
 #   define WORD_BITS 64
 #else
@@ -311,7 +311,7 @@ typedef objc::DenseMap<DisguisedPtr<objc_object>,size_t,true> RefcountMap;
 
 这里提一下`SideTable`，它用于管理引用计数表和`weak`表，并使用`spinlock_lock`自旋锁来防止操作表结构时可能的竞态条件。它用一个64*128大小的`uint8_t`静态数组保存所有`SideTable`实例，提供三个公有属性
 
-```objective-c
+```objc
 spinlock_t slock; //保证原子操作
 RefcountMap refcnts; //保存引用计数的散列表
 weak_table_t weak_table;//保存weak引用的全局散列表
@@ -319,14 +319,14 @@ weak_table_t weak_table;//保存weak引用的全局散列表
 
 还有一个工厂方法
 
-```objective-c
+```objc
 static SideTable *tableForPointer(const void *p)
 /** 根据对象的地址在buffer中寻找对应的SideTable实例 **/
 ```
 
 `weak`表的作用是在对象执行`dealloc`的时候将所有指向该对象的`weak`指针的值设为`nil`，避免悬空指针。
 
-```objective-c
+```objc
 //weak表的结构
 struct weak_table_t{
     weak_entry_t *weak_entries;
@@ -346,7 +346,7 @@ struct weak_table_t{
 
 最后这两个函数会调用`objc_object`的两个方法：
 
-```objective-c
+```objc
 inline id 
 objc_object::rootRetain()
 {
@@ -372,7 +372,7 @@ objc_object::rootRelease()
 
 `sidetable_release()`返回是否要执行`dealloc`方法
 
-```objective-c
+```objc
 沙漠中怎么会有泥鳅  11:14:20
 bool 
 objc_object::sidetable_release(bool performDealloc)
@@ -415,7 +415,7 @@ objc_object::sidetable_release(bool performDealloc)
 
 Core Foundation库中也提供了增减引用计数的方法。
 
-```objective-c
+```objc
 //CFBridgingRetain
 NS_INLINE CF_RETURNS_RETAINED CFTypeRef __nullable CFBridgingRetain(id __nullable X) {
     return (__bridge_retained CFTypeRef)X;
@@ -452,7 +452,7 @@ NS_INLINE id __nullable CFBridgingRelease(CFTypeRef CF_CONSUMED __nullable X) {
 
 ### alloc/new
 
-```objective-c
+```objc
 //自己生成并持有对象
 id obj1 = [[NSObject alloc] init];
 //自己持有对象
@@ -469,7 +469,7 @@ id obj2 = [NSObject new];
 
 `alloc`也可以用自定义的`init`方法(例如`initWithFrame`)而new只能用默认的init。
 
-```objective-c
+```objc
 id
 _objc_rootAlloc(Class cls)
 {
@@ -487,7 +487,7 @@ _objc_rootAlloc(Class cls)
 
 后续调用顺序为：
 
-```objective-c
+```objc
 class_createInstance()
 _class_createInstanceFromeZone()
 calloc()
@@ -509,7 +509,7 @@ calloc()
 
 用上述方法以外的方法（即用`alloc`、`new`、`copy`和`mutableCopy`以外的方法）取得的对象，因为非自己生成持有，所以自己不是该对象的持有者。
 
-```objective-c
+```objc
 //取得非自己生成并持有的对象
 id obj = [NSMutableArray array];
 //取得的对象存在，但自己不持有对象
@@ -523,7 +523,7 @@ id obj = [NSMutableArray array];
 
 自己持有的对象，一旦不需要，持有者有义务释放该对象。释放使用`release`方法。
 
-```objective-c
+```objc
 //自己生成并持有对象
 id obj = [[NSObject alloc] init];
 //自己持有对象
@@ -556,7 +556,7 @@ id obj = [NSMutableArray array];
 
 如果要用某个方法生成对象，并将其返还给该方法的调用方，则需要以下方法
 
-```objective-c
+```objc
 - (id) allocObject {
     //自己生成并持有
   id obj = [[NSObject alloc] init];
@@ -580,7 +580,7 @@ id obj1 =[obj0 allocObject];
 
 若使取得的对象存在，但自己不持有对象，就需要这样
 
-```objective-c
+```objc
 -(id)Object{
     id obj = [[NSObject alloc] init];
   //自己持有对象
@@ -602,7 +602,7 @@ id obj1 =[obj0 allocObject];
 
 而由此以外所得到的对象绝对不能释放。倘若在应用程序中释放了非自己持有的对象就会造成崩溃。
 
-```objective-c
+```objc
 /**释放完不再需要的对象后再次释放**/
 
 //自己生成并持有对象
@@ -642,7 +642,7 @@ ARC有效时，id类型和对象类型同C语言其他类型不同，其类型�
 
 __strong修饰符是id类型和对象类型默认的所有权修饰符。也就是说以下源代码中的id变量，实际上被附加了所有权修饰符
 
-```objective-c
+```objc
 id obj = [[NSObject alloc]init];
 //等价于
 id __strong obj = [[NSObject alloc] init];
@@ -650,13 +650,13 @@ id __strong obj = [[NSObject alloc] init];
 
 ARC无效时，则这样表述
 
-```objective-c
+```objc
 id obj = [[NSObject alloc] init];
 ```
 
 这段代码表面上无任何变化，再看一下下面的代码
 
-```objective-c
+```objc
 {
   id __strong obj = [[NSObject alloc] init];
 }
@@ -664,7 +664,7 @@ id obj = [[NSObject alloc] init];
 
 此源代码制定了C语言的变量的作用域。ARC无效时，该源码可记为：
 
-```objective-c
+```objc
 //ARC无效
 {
     id obj = [[NSObject alloc] init];
@@ -680,7 +680,7 @@ __strong修饰符表示对对象的”强引用”。持有强引用的变量在
 
 上文中的代码是自己生成自己持有的情况，那么在取得非自己生成并持有的对象时又会如何？
 
-```objective-c
+```objc
 {
   //取的非自己生成并持有的对象
     id __strong obj = [NSMutableArray array];
@@ -694,7 +694,7 @@ __strong修饰的变量，不仅只在变量作用域中，在赋值上也能正
 
 另外，\_\_strong修饰符同后面要说到的\_\_weak修饰符和\_\_autoreleasing修饰符一起，可以保证将附有这些修饰符的自动变量初始化为nil。
 
-```objective-c
+```objc
 id __strong obj0;
 id __weak obj1;
 id __autoreleasing obj2;
@@ -710,7 +710,7 @@ id __autoreleasing obj2 = nil;
 
 使用引用计数式内存管理中必然会发生“循环引用”问题，而光靠__strong是无法解决这一重大问题的。
 
-```objective-c
+```objc
 @interface Test : NSObject
 {
     id __strong obj_;
@@ -764,7 +764,7 @@ id test = [[Test alloc] init];
 
 首先需要声明的是，__weak不能用来直接声明变量
 
-```objective-c
+```objc
 id __weak obj = [[NSObject alloc] init];
 //会提示以下错误
 warning: assigning retained obj to weak variable; obj will be       released after assignment [-Warc-unsafe-retained-assign]
@@ -774,7 +774,7 @@ warning: assigning retained obj to weak variable; obj will be       released aft
 
 以上代码会导致生成的对象立即释放(因为弱引用并不持有对象)。如果像以下这种情况的话，就没有警告了
 
-```objective-c
+```objc
 id __strong obj0 = [[NSObject alloc ] init];
 id __weak obj1 = obj0;
 //解决上一例子中循环引用问题
@@ -788,7 +788,7 @@ id __weak obj1 = obj0;
 
 __weak修饰符还有一个优点——在持有某对象的弱引用时，若该对象被废弃，则弱引用自动失效且置为nil：
 
-```objective-c
+```objc
 id __weak obj1 = nil;
 {
     id __strong obj0 = [[NSObject alloc] init];
@@ -811,7 +811,7 @@ __unsafe_unretained修饰符是不安全的所有权修饰符。它不属于编�
 
 它也与__weak一样，不能直接生成变量，但是它也有不同的地方
 
-```objective-c
+```objc
 id __unsafe_unretained obj1 = nil;
 {  //自己生成并持有对象
     id __strong obj0 = [[NSObject alloc] init];
@@ -850,7 +850,7 @@ ARC有效时不能使用autorelease方法，也不能使用NSAutoreleasePool类�
 
 那么我们用autoreleas的方法就有所不同
 
-```objective-c
+```objc
 //ARC无效
 NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 id obj = [NSObject alloc] init];
@@ -870,7 +870,7 @@ id obj = [NSObject alloc] init];
 
 虽然可以用alloc/new/copy/mutableCopy以外的方法来获得对象，但该对象已被注册到了autoreleasepool。由于编译器会检查方法是否以alloc/new/copy/mutableCopy开始，如果不是则自动将返回值注册到autoreleasepool。
 
-```objective-c
+```objc
 + (id) array{
     id obj = [[NSMutableArray alloc] init];
   return obj;
@@ -882,7 +882,7 @@ id obj = [NSObject alloc] init];
 
 以下为使用__weak修饰符的例子，虽然\_\_weak修饰符是为了避免循环引用而使用的，但在访问附有\_\_weak修饰符的变量时，实际上必定要访问注册到autoreleasepool的对象。
 
-```objective-c
+```objc
 id __weak obj1 = obj0;
 NSLog(@"class = %@",[obj class]);
 //等价于

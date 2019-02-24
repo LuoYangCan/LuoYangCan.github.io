@@ -30,7 +30,7 @@ tags: [iOS]
 * 调用已分配对象的 autorelease 实例方法
 * 废弃 NSAutoreleasePool 对象
 
-```objective-c
+```objc
 //表示如下
 NSAutoreleasePool *pool = [[[NSAutoreleasePool alloc]init]autorealease];
 id obj = [[NSObject alloc] init];
@@ -46,7 +46,7 @@ id obj = [[NSObject alloc] init];
 
 其实在没有人工添加 Autoreleasepool 的情况下，Autorealease 对象是在当前的`runloop`结束时释放的，而它能释放的原因也是系统在每个 runloop 中都加入了自动释放池 push 和 pop。
 
-```objective-c
+```objc
 __weak id reference = nil;
 -(void)viewdidLoad{
     [super viewDidLoad];
@@ -68,7 +68,7 @@ __weak id reference = nil;
 
 当然我们也可以手动干预
 
-```objective-c
+```objc
 -(void)viewDidLoad{
     [super viewDidLoad];
   @autoreleasepool {
@@ -82,7 +82,7 @@ __weak id reference = nil;
 
 ARC 下，我们用`@autoreleasepool{}`来使用一个 AutoreleasePool，随后编译器会转化为这样
 
-```objective-c
+```objc
 void *context = objc_autoreleasePoolPush();
 //{}中的代码
 objc_autoreleasePoolPop(context);

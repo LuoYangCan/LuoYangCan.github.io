@@ -34,15 +34,15 @@ iOS的推送有本地推送和远程推送两种，由于项目只需要个提�
   #endif
   ```
 
-  ​
+  
 
 * 2、我们需要注册通知（需在`Appdelegate`中的`-(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions`注册）：
 
-  ```objective-c
+  ```objc
    if ([[UIDevice currentDevice].systemVersion floatValue] >= 10.0) {
           //iOS10特有
           UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-
+  
           center.delegate = self;
           [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound) completionHandler:^(BOOL granted, NSError * _Nullable error) {
               if (granted) {
@@ -68,12 +68,12 @@ iOS的推送有本地推送和远程推送两种，由于项目只需要个提�
       [[UIApplication sharedApplication] registerForRemoteNotifications];
       
   }
-
+  
   ```
 
   * 获取DeviceToken
 
-    ```objective-c
+    ```objc
     #pragma  mark - 获取device Token
     //获取DeviceToken成功
     - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
@@ -93,7 +93,7 @@ iOS的推送有本地推送和远程推送两种，由于项目只需要个提�
 
   * 值得一提的是iOS10更新后，在`<UNUserNotificationCenterDelegate>`中有两个处理通知接受和点击事件的方法
 
-    ```objective-c
+    ```objc
     @protocol UNUserNotificationCenterDelegate <NSObject>
 
     @optional
@@ -115,7 +115,7 @@ iOS的推送有本地推送和远程推送两种，由于项目只需要个提�
 
   iOS10中接受通知回调是这样用的
 
-  ```objective-c
+  ```objc
   // iOS 10收到通知
   - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler{
       NSDictionary * userInfo = notification.request.content.userInfo;
@@ -126,10 +126,10 @@ iOS的推送有本地推送和远程推送两种，由于项目只需要个提�
       UNNotificationSound *sound = content.sound;  // 推送消息的声音
       NSString *subtitle = content.subtitle;  // 推送消息的副标题
       NSString *title = content.title;  // 推送消息的标题
-
+  
       if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
           NSLog(@"iOS10 前台收到远程通知:%@", [self logDic:userInfo]);
-
+  
       }
       else {
           // 判断为本地通知
@@ -137,34 +137,36 @@ iOS的推送有本地推送和远程推送两种，由于项目只需要个提�
       }
       completionHandler(UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound|UNNotificationPresentationOptionAlert); // 需要执行这个方法，选择是否提醒用户，有Badge、Sound、Alert三种类型可以设置
   }
-  ```
-
-
-  // 通知的点击事件
-  - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler{
-
-      NSDictionary * userInfo = response.notification.request.content.userInfo;
-      UNNotificationRequest *request = response.notification.request; // 收到推送的请求
-      UNNotificationContent *content = request.content; // 收到推送的消息内容
-      NSNumber *badge = content.badge;  // 推送消息的角标
-      NSString *body = content.body;    // 推送消息体
-      UNNotificationSound *sound = content.sound;  // 推送消息的声音
-      NSString *subtitle = content.subtitle;  // 推送消息的副标题
-      NSString *title = content.title;  // 推送消息的标题
-      if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
-          NSLog(@"iOS10 收到远程通知:%@", [self logDic:userInfo]);
-
-      }
-      else {
-          // 判断为本地通知
-          NSLog(@"iOS10 收到本地通知:{\\\\nbody:%@，\\\\ntitle:%@,\\\\nsubtitle:%@,\\\\nbadge：%@，\\\\nsound：%@，\\\\nuserInfo：%@\\\\n}",body,title,subtitle,badge,sound,userInfo);
-      }
-
-      // Warning: UNUserNotificationCenter delegate received call to -userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler: but the completion handler was never called.
-      completionHandler();  // 系统要求执行这个方法
-
+    // 通知的点击事件
+  
+  (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler{
+  
+  NSDictionary * userInfo = response.notification.request.content.userInfo;
+  UNNotificationRequest *request = response.notification.request; // 收到推送的请求
+  UNNotificationContent *content = request.content; // 收到推送的消息内容
+  NSNumber *badge = content.badge;  // 推送消息的角标
+  NSString *body = content.body;    // 推送消息体
+  UNNotificationSound *sound = content.sound;  // 推送消息的声音
+  NSString *subtitle = content.subtitle;  // 推送消息的副标题
+  NSString *title = content.title;  // 推送消息的标题
+  if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+      NSLog(@"iOS10 收到远程通知:%@", [self logDic:userInfo]);
+  
   }
+  else {
+      // 判断为本地通知
+      NSLog(@"iOS10 收到本地通知:{\\nbody:%@，\\ntitle:%@,\\nsubtitle:%@,\\nbadge：%@，\\nsound：%@，\\nuserInfo：%@\\n}",body,title,subtitle,badge,sound,userInfo);
+  }
+  
+  // Warning: UNUserNotificationCenter delegate received call to -userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler: but the completion handler was never called.
+  completionHandler();  // 系统要求执行这个方法
+  
+    }
+  
   ```
+
+
+  ```objc
 
   **这里需要提到的是，如果我们不写completionHandler（）这个方法，可能会报错误**
 
@@ -199,7 +201,7 @@ iOS的推送有本地推送和远程推送两种，由于项目只需要个提�
 
   * 而在iOS10之后，通知创建变成了这样：
 
-  ```objective-c
+  ```objc
   UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
       content.title = @"iOS10之后啦";
       content.subtitle = @"搞事了";

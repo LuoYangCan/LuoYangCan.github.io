@@ -64,7 +64,7 @@ int main(int argc, const char * argv[]){
 
 对象在收到无法解读的消息后，首先调用其所属类的这个类方法
 
-```objective-c
+```objc
 + (BOOL)resolveInstanceMethod:(SEL)selector
     //selector : 消息转发里的未知选择子
     //返回YES结束消息转发

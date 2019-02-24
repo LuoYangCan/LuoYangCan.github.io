@@ -6,7 +6,7 @@ tags: [RAC,iOS]
 
 
 
-​　　最近做了一个蓝牙相关的项目，项目的前辈当时是用的ReactiveCocoa（RAC）做的，才开始接手的时候，看的一头雾水。经过一段时间自学，现在对RAC略知一二。
+　　最近做了一个蓝牙相关的项目，项目的前辈当时是用的ReactiveCocoa（RAC）做的，才开始接手的时候，看的一头雾水。经过一段时间自学，现在对RAC略知一二。
 
 ​	<!-- more -->
 
@@ -30,7 +30,7 @@ RAC是github上的一个开源项目，可以说是将响应式编程做到了�
 
 比如
 
-```iOS
+```objc
 //filter某个属性满足一定条件才执行。  
 
   [[RACObserve(self, count) filter:^BOOL(id count) {
@@ -60,7 +60,7 @@ RAC中监听属性改变不再像KVO中用```-observeValueForKeyPath:ofObject:ch
 
 而是使用block
 
-```iOS
+```objc
 // 只有当名字以'j'开头，才会被记录
 [[RACAble(self.username) filter:^(NSString *newName) {
        return [newName hasPrefix:@"j"];
@@ -72,7 +72,7 @@ RAC中监听属性改变不再像KVO中用```-observeValueForKeyPath:ofObject:ch
 
 > Notification
 
-```iOS
+```objc
 [[NSNotificationCenter defaultCenter]rac_addObserverForName:@"ReceiveData" object:nil] subscribeNext:^(NSNotification * _Nullable x) {
                 NSlog(@"%@",x);
    } 

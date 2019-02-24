@@ -64,7 +64,7 @@ Runtime系统是一个有一系列函数和数据结构组成，具有公共接�
 
 在一个类似[a someFuc]的方法调用中，编译阶段编译器并不知道someFuc要实现哪一段代码而只是确定了要向接受者发送someFuc消息，只有到运行的时候，才会发送消息进行方法的确定。这里我们可以看一下objc的底层实现。
 
-```objective-c
+```objc
 //main.m
 int main(int argc, const char * argv[]){
     @autoreleasepool{
@@ -85,7 +85,7 @@ int main(int argc, const char * argv[]){
 
 如上图所示，其实Objc所有方法在底层都会变成一个函数，那就是`objc_msgSend()`。
 
-```objective-c
+```objc
 id objc_msgSend ( id self, SEL op, ...);
 ```
 
@@ -95,7 +95,7 @@ id objc_msgSend ( id self, SEL op, ...);
 
 它是`selector`在Objc中的表示类型。`selector`是方法选择器，相当于区分各个方法的一个ID，这个ID的数据结构就是SEL
 
-```objective-c
+```objc
 typedef struct objc_selector *SEL;
 ```
 
@@ -107,13 +107,13 @@ typedef struct objc_selector *SEL;
 
 作为开发者，大家应该对id都不会陌生，它是一个指向类实例的指针
 
-```objective-c
+```objc
 typedef struct objc_object *id;
 ```
 
 在这之中，`objc_object`是这样的一个结构体
 
-```objective-c
+```objc
 //objc-private.h
 struct objc_object {
 private:
@@ -140,13 +140,13 @@ objc_object中又有属性值得我们注意
 
 `Class`其实是一个指向`objc_class`结构体的指针
 
-```objective-c
+```objc
 typedef struct objc_class *Class;
 ```
 
 这个`objc_class`又包含很多方法了
 
-```objective-c
+```objc
 struct objc_class : objc_object {
     // Class ISA;
     Class superclass;
@@ -177,7 +177,7 @@ struct objc_class : objc_object {
 
 ##### cache_t
 
-```objective-c
+```objc
 struct cache_t {
     struct bucket_t *_buckets;
     mask_t _mask;
@@ -196,7 +196,7 @@ struct cache_t {
 
 `bucket_t`中存储了指针与IMP的键值对：
 
-```objective-c
+```objc
 struct bucket_t {
 private:
     cache_key_t _key;
@@ -218,7 +218,7 @@ public:
 
 `class_data_bits_t`包含的信息太多了，主要有`class_rw_t`,`retain/release/autorelease/retaincount`和`alloc`等信息。
 
-```objective-c
+```objc
 //objc-runtime-new.h
 struct class_data_bits_t {
 
@@ -239,7 +239,7 @@ struct class_data_bits_t {
 
 64位不兼容中每个宏对应含义如下:
 
-```objective-c
+```objc
 // class is a Swift class
 #define FAST_IS_SWIFT           (1UL<<0)
 // class's instances requires raw isa
@@ -272,7 +272,7 @@ struct class_data_bits_t {
 
 而`FAST_DATA_MASK`的存储区域里面其实就是存储了指向`class_rw_t`的指针
 
-```objective-c
+```objc
 class_rw_t* data() {
    return (class_rw_t *)(bits & FAST_DATA_MASK);
 }
@@ -282,13 +282,13 @@ class_rw_t* data() {
 
 #### Category
 
-```objective-c
+```objc
 typedef struct category_t *Category;
 ```
 
 `Category`为现有的类提供了拓展，存储了类别中可以拓展的实例方法、实例属性和类方法、类属性(objc2016新增特性)。
 
-```objective-c
+```objc
 struct category_t {
     const char *name;
     classref_t cls;
@@ -312,13 +312,13 @@ App 启动加载镜像文件的时候，会简介调用到`attachCategories`函�
 
 #### Method
 
-```objective-c
+```objc
 typedef struct method_t *Method;
 ```
 
 它存储了方法名，方法类型和方法实现：
 
-```objective-c
+```objc
 struct method_t {
     SEL name;
     const char *types;
@@ -341,7 +341,7 @@ struct method_t {
 
 #### Ivar
 
-```objective-c
+```objc
 typedef struct ivar_t *Ivar;
 
 
@@ -364,7 +364,7 @@ struct ivar_t {
 
 `IMP`在`objc.h`中为：
 
-```objective-c
+```objc
 typedef void (*IMP)(void /* id, SEL, ... */);
 ```
 

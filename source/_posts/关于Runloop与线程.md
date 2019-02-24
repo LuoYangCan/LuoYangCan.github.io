@@ -81,7 +81,7 @@ RunLoop有五种模式，分别是
 
 我们先创建一个自定义线程类，来重写它的-dealloc方法
 
-```objective-c
+```objc
 //LYC_Thread.h
 -(void)dealloc{
     NSLog(@"线程结束");
@@ -90,7 +90,7 @@ RunLoop有五种模式，分别是
 
 再进行线程创建
 
-```objective-c
+```objc
 //ViewController.m
 #import "LYC_Thread.h"
 @interface ViewController ()
@@ -133,7 +133,7 @@ RunLoop有五种模式，分别是
 
 于是我们加入一个死循环在thread中并取消对`LYC_Thread`的强引用
 
-```objective-c
+```objc
 //ViewController.m
 - (void)viewDidLoad {
     [super viewDidLoad];

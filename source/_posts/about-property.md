@@ -36,7 +36,7 @@ tags: iOS
 
 比如下面这个经典的例子
 
-```objective-c
+```objc
 @interface Person : NSObject
 @property NSString *firstName;
 @property NSString *lastName;
@@ -45,7 +45,7 @@ tags: iOS
 
 上面的写法等价于：
 
-```objective-c
+```objc
 @interface Person : NSObject
 - (NSString *)firstName;
 - (void)setFirstName:(NSString *)firstName;
@@ -72,7 +72,7 @@ tags: iOS
 
   `getter = <name>`的样式：
 
-  ```objective-c
+  ```objc
   @property (nonatomic, getter = isOn) BOOL on;
   ```
 
@@ -82,7 +82,7 @@ tags: iOS
 
   这时候我们就要用到`setter = <name>`来防止编译器报错
 
-  ```objective-c
+  ```objc
   @property(nonatomic, strong, getter=p_initBy, setter=setP_initBy:)NSString *initBy;
 
   //对关键字特殊说明
@@ -98,7 +98,7 @@ tags: iOS
 
 还是那个例子
 
-```objective-c
+```objc
 @interface Person : NSObject
 {
     NSString *_firstName;
@@ -121,26 +121,26 @@ tags: iOS
 
 这个 Person 类被编译之后变成一个描述 (arm64)，Person 占用24个字节，前8个字节是 isa 指针，中间八个字节是 NSString 指针，后八个字节是 NSInteger 的值
 
-```objective-c
+```objc
 | isa | NSString * _firstName | NSInteger _age |
 ```
 
 调用`[[Person alloc]init]`的时候，会分配出24个字节的内存出来：
 
-```objective-c
+```objc
 | 0 | 0 | 0 |
 ```
 
 然后往前8个字节放isa地址
 
-```objective-c
+```objc
 //alloc完成后
 | isa | 0 | 0 |
 ```
 
 然后调用alloc出来的 init 方法，把 \_age 的值赋为1，因为 \_firstName 没有初始化，所以还是0。
 
-```objective-c
+```objc
 //init之后
 | isa | 0 | 1 |
 ```
@@ -176,13 +176,13 @@ Objc对象通常会把所需要的数据保存为各种实例变量。
 
 property 在 runtime 中是`objc_property_t`，定义如下：
 
-```objective-c
+```objc
 typedef struct objc_property *objc_property_t;
 ```
 
 而`objc_property`是一个结构体，包含了`name`和`attributes`。
 
-```objective-c
+```objc
 struct property_t {
     const char *name;
     const char *attributes;
@@ -191,7 +191,7 @@ struct property_t {
 
 attributes 本质是`objc_property_attribute_t`，定义了 property 的一些属性。
 
-```objective-c
+```objc
 typedef struct{
     const char *name;
  	const char *value;
@@ -210,7 +210,7 @@ T 代表类型，C 代表 Copy，N 代表 nonatomic，V 代表实例变量。
 
 可通过`@synthesize`语法来指定实例变量的名字。
 
-```objective-c
+```objc
 @implementation Person
 @synthesize firstName = _myFirstName;
 @synthesize lastName = _myLastName;

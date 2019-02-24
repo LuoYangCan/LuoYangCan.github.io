@@ -56,7 +56,7 @@ iOS 11 废弃了 iOS 7 之后出现的 topLayoutGuide/bottomLayoutGuide，而用
 
 改为
 
-```objective-c
+```objc
 if (@available (iOS 11.0, *)){
   make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
   make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideTop);

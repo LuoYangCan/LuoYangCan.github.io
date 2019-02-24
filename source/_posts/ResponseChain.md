@@ -40,7 +40,7 @@ iOS 中的事件可以分为：
 
 UIResponder 里有特殊的方法来处理各个事件：
 
-```objective-c
+```objc
 //触摸事件
 //手指开始触摸 view 时，调用以该方法
 - (void)touchesBegan:(NSSet<UITouch *> *)touches 
@@ -76,7 +76,7 @@ UITouch 对象保存着跟手指相关的信息（位置、时间等等），一
 
 UITouch 对象有以下属性和方法：
 
-```objective-c
+```objc
 //有关获取触摸位置
 /** 触摸时的 view 或 window */
 @property(nonatomic, readonly, strong) UIView *view;
@@ -123,7 +123,7 @@ UITouch 对象有以下属性和方法：
 
 UIEvent 记录着时间产生的时刻和类型，一个事件对应一个 UIEvent
 
-```objective-c
+```objc
 //事件产生时间
 @property(nonatomic, readonly) NSTimeInterval timestamp;
 //类型
@@ -170,7 +170,7 @@ UIView 不接受触摸事件的话一般是一下三种情况
 
 UIView 提供了两个方法来寻找最合适的 view
 
-```objective-c
+```objc
 // 用来寻找最合适的View处理事件，只要一个事件传递给一个控件就会调用控件的hitTest方法，参数point 表示方法调用者坐标系上的点
 - (UIView *)hitTest:(CGPoint)point 
           withEvent:(UIEvent *)event;
