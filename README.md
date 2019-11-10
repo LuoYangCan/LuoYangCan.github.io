@@ -1,2 +1,2 @@
-[阿灿的随想录](http://luoyangcan.top)
+[阿灿的随想录](http://luoyangcan.github.io)
 
