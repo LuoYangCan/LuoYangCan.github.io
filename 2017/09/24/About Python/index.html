@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext"/>
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg?v=6.7.0" color="#222">
+
+
+  <link rel="manifest" href="/images/android-chrome-96x96.png">
+
+
+  <meta name="msapplication-config" content="/images/browserconfig.xml"/>
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言 因为最近没事干想学下爬虫玩一下，顺便因为自己是信息安全专业，学一下py应该还蛮有趣的。 ​">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PY语言基础">
+<meta property="og:url" content="http://yoursite.com/2017/09/24/About Python/index.html">
+<meta property="og:site_name" content="阿灿的大树洞">
+<meta property="og:description" content="前言 因为最近没事干想学下爬虫玩一下，顺便因为自己是信息安全专业，学一下py应该还蛮有趣的。 ​">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-10T07:00:43.225Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PY语言基础">
+<meta name="twitter:description" content="前言 因为最近没事干想学下爬虫玩一下，顺便因为自己是信息安全专业，学一下py应该还蛮有趣的。 ​">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="阿灿的大树洞" type="application/atom+xml"/>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/24/About Python/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>PY语言基础 | 阿灿的大树洞</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+      <a href="https://github.com/LuoYangCan" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿灿的大树洞</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">物极必反，否极泰来</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tag"></i> <br/>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user-circle"></i> <br/>关于我</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/24/About Python/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Reus"/>
+      <meta itemprop="description" content="纸上得来终觉浅，绝知此事要躬行"/>
+      <meta itemprop="image" content="/images/avatar.gif"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿灿的大树洞"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PY语言基础
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-09-24 23:04:40" itemprop="dateCreated datePublished" datetime="2017-09-24T23:04:40+08:00">2017-09-24</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-11-10 15:00:43" itemprop="dateModified" datetime="2019-11-10T15:00:43+08:00">2019-11-10</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/09/24/About Python/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2017/09/24/About Python/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+            <span id="/2017/09/24/About Python/" class="leancloud_visitors" data-flag-title="PY语言基础">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><hr>
+<p>因为最近没事干想学下爬虫玩一下，顺便因为自己是信息安全专业，学一下py应该还蛮有趣的。</p>
+<p>​    <a id="more"></a></p>
+<p>安装Python这些就不扯了</p>
+<p>直接进入基础吧</p>
+<h1 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h1><hr>
+<p>其实Python的数据类型和其他语言的差不多，大致也是以下几种</p>
+<h2 id="整数"><a href="#整数" class="headerlink" title="整数"></a>整数</h2><p>Python可处理任意大小的整数。</p>
+<p>由于计算机使用二进制，所以有时候用十六进制表示整数比较方便。</p>
+<p>十六进制用<code>0x</code>前缀和0~9,a~f表示。例如<code>0xff00</code></p>
+<h2 id="浮点数"><a href="#浮点数" class="headerlink" title="浮点数"></a>浮点数</h2><p>浮点数就是小数。</p>
+<p>之所以叫他浮点数，是因为用科学计数法表示时，一个浮点数的小数点位置是可变的。就像<code>1.23x10^9</code>和<code>12.3x10^8</code>完全相等。</p>
+<p>对于很大的数或很小的浮点数，就必须用科学计数法表示</p>
+<p>在Python中文名用e替代10。也就是说<code>1.23x10^9</code>等价于<code>1.23e9</code></p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>字符串是以单引号<code>‘</code>和双引号<code>&quot;</code>括起来的任意文本</p>
+<p>单引号双引号都可以用，只要不混用。</p>
+<p>如果<code>&#39;</code>本来就是一个字符，那可以用<code>&quot;&quot;</code>括起来。</p>
+<p>如果字符串内又有<code>&quot;</code>又有<code>&#39;</code>的话。</p>
+<p>熟悉的转义字符就出现了，还是老样子，还是用<code>\</code>标识</p>
+<p>Python的字符串是以Unicode编码的，所以Python的字符串支持多种语言</p>
+<p>Python的字符串类型是<code>str</code>，在内存中用Unicode表示，一个字符对应若干个字节。如果要在网络上传输，或者保存到磁盘上，就需要把<code>str</code>转化为<code>bytes</code></p>
+<p>Python对<code>bytes</code>类型的数据用带<code>b</code>前缀的单引号或双引号表示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">x = <span class="string">b'ABC'</span></div></pre></td></tr></table></figure>
+<p>要注意区分<code>ABC</code>和<code>b&#39;ABC&#39;</code>。后者虽然内容和前者一样，但是<code>bytes</code>的每个字符只占用一个字节。</p>
+<p>以Unicode表示的<code>str</code>都可以通过<code>encjode()</code>方法编码为制定的<code>bytes</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'ABC'</span>.encode(<span class="string">'ascii'</span>)</div><div class="line"><span class="string">b'ABC'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'中文'</span>.encode(<span class="string">'utf-8'</span>)</div><div class="line"><span class="string">b'\xe4\xb8\xad\xe6\x96\x87'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'中文'</span>.encode(<span class="string">'ascii'</span>)</div><div class="line">Traceback (most recent call last):</div><div class="line">  File<span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">UnicodeEncodeError:<span class="string">'ascii'</span> codec can<span class="string">'t encode characters in position 0-1:ordinal not in range(128)</span></div></pre></td></tr></table></figure>
+<p>纯英文的<code>str</code>可以用<code>ASCII</code>编码为<code>bytes</code>，内容是一样的。含有中文的<code>str</code>可以用<code>UTF-8</code>编码为<code>bytes</code>。含有中文的<code>str</code>无法用<code>ASCII</code>编码，因为中文编码超过了<code>ASCII</code>编码的范围，会报错。</p>
+<p>反过来我们如果要从网络上读取字节流，就要把<code>bytes</code>变为<code>str</code>，需要用到<code>decode()</code>方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">b'ABC'</span>.decode(<span class="string">'ascii'</span>)</div><div class="line"><span class="string">'ABC'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">b'\xe4\xb8\xad\xe6\x97\x87'</span>.decode(<span class="string">'utf-8'</span>)</div><div class="line"><span class="string">'中文'</span></div></pre></td></tr></table></figure>
+<p>要计算长度，可以用<code>len()</code>函数</p>
+<p>由于Python源代码也是一个问本文件，所以当你的源代码包含中文的时候，为了避免乱码，应当自始至终用UTF-8编码，当Python解释器读取源代码时，为了让它按UTF-8编码读取，我们常在开头上写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div></pre></td></tr></table></figure>
+<p>第一行是为了告诉Linux/OS X系统，这是一个Python可执行程序</p>
+<p>第二行是为了告诉Python解释器，按照UTF-8编码读取源代码。</p>
+<p>我们经常会输出类似<code>亲爱的xx您好！…</code>这种字符串。xx的内容是需要变化的</p>
+<p>在Python中 ，这样的方式是用<code>%</code>实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'Hello, %s'</span> % <span class="string">'world'</span></div><div class="line"><span class="string">'Hello, world'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'Dear %s , you have $%d'</span> % (<span class="string">'Rues'</span>,<span class="number">7</span>)</div><div class="line"><span class="string">'Dear Reus , you have $7'</span></div></pre></td></tr></table></figure>
+<p>和许多语言一样，Python也有很多占位符</p>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%d</td>
+<td>整数</td>
+</tr>
+<tr>
+<td>%f</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td>%s</td>
+<td>字符串</td>
+</tr>
+<tr>
+<td>%x</td>
+<td>十六进制整数</td>
+</tr>
+</tbody>
+</table>
+<p>格式化整数和浮点数还可以指定是否补0和整数与小数的位数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'%2d-%02d'</span> % (<span class="number">3</span>,<span class="number">1</span>)</div><div class="line"><span class="string">'3-01'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'%.2f'</span> % <span class="number">3.1415926</span></div><div class="line"><span class="string">'3.14'</span></div></pre></td></tr></table></figure>
+<p>如果你不确定要用什么，那就用<code>%s</code>，就好比Objective-C中的<code>%@</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'Age: %s. Gender: %s'</span> % (<span class="number">25</span>,<span class="keyword">True</span>)</div><div class="line"><span class="string">'Age: 25. Gender: True'</span></div></pre></td></tr></table></figure>
+<h3 id="打印字符串"><a href="#打印字符串" class="headerlink" title="打印字符串"></a>打印字符串</h3><p>我们可以用<code>print()</code>打印字符串。</p>
+<p>Python允许用<code>r&#39;&#39;</code>标识<code>&#39;&#39;</code>内部的字符默认不转义。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'\\\t\\'</span>)</div><div class="line">\    \</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">r'\\\t\\'</span>)</div><div class="line">\\\t\\</div></pre></td></tr></table></figure>
+<p>如果字符串换行很多，写一行看着难受。Python还支持使用<code>&#39;&#39;&#39;...&#39;&#39;&#39;</code>标识多行内容</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'''line1</span></div><div class="line"><span class="string">line2</span></div><div class="line"><span class="string">line3'''</span>)</div><div class="line"></div><div class="line">line1</div><div class="line">line2</div><div class="line">line3</div></pre></td></tr></table></figure>
+<h2 id="布尔值"><a href="#布尔值" class="headerlink" title="布尔值"></a>布尔值</h2><p>在其他很多语言中我们用<code>True</code>、<code>False</code>标识布尔值，Python也不例外。</p>
+<p>在Python中，布尔值可以用<code>and</code>、<code>or</code>和<code>not</code>运算。</p>
+<p><code>and</code>是与运算</p>
+<p><code>or</code>是或运算</p>
+<p><code>not</code>是非运算</p>
+<h2 id="空值"><a href="#空值" class="headerlink" title="空值"></a>空值</h2><p>空值是Python中一个特殊值，用<code>None</code>表示。</p>
+<p>注意 <code>None</code>不是<code>0</code>，<code>0</code>是有意义的。</p>
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>变量不仅可以是数字，还可以是任意数据类型。</p>
+<p>变量名必须是大小写英文、数字和<code>_</code>的组合。且不能以数字开头</p>
+<p>Python是一门动态语言，变量本身类型不固定。我们可以把任意数据类型赋值给变量，同一个变量可以反复赋值。</p>
+<h2 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h2><p>Python中常量一般都是全部大写。</p>
+<p>事实上Python没有任何机制保证常量不会改变。所以全部大写常量名字只是一种习惯。</p>
+<h2 id="list与tuple"><a href="#list与tuple" class="headerlink" title="list与tuple"></a>list与tuple</h2><h3 id="list"><a href="#list" class="headerlink" title="list"></a>list</h3><p>Python中有列表<code>list</code>这种数据类型，是有序的集合，可以随时添加删除期中的元素。有点像objc中的MutableArray</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//list</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates = [<span class="string">'Reus'</span>, <span class="string">'Reus1'</span>, <span class="string">'Rues2'</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates </div><div class="line">[<span class="string">'Reus'</span>, <span class="string">'Reus1'</span>, <span class="string">'Reus2'</span>]</div><div class="line">//空list</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>c = []</div></pre></td></tr></table></figure>
+<p>我们可以用<code>len()</code>获得list元素的个数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>len(classmates)</div><div class="line"><span class="number">3</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>len(c)</div><div class="line"><span class="number">0</span></div></pre></td></tr></table></figure>
+<p>还可以用索引访问list的元素，甚至还可以直接获取倒数得到的数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates[<span class="number">0</span>]</div><div class="line"><span class="string">'Reus'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates[<span class="number">1</span>]</div><div class="line"><span class="string">'Reus1'</span></div><div class="line"></div><div class="line">//溢出</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates[<span class="number">3</span>]</div><div class="line">Traceback (most recent call last):</div><div class="line">  File<span class="string">"&lt;stdin&gt;"</span>. line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">IndexError: list index out of range</div><div class="line">  </div><div class="line">//查看最后一个元素</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates[<span class="number">-1</span>]</div><div class="line"><span class="string">'Reus2'</span></div><div class="line">//倒数第二个</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates[<span class="number">-2</span>]</div><div class="line"><span class="string">'Reus1'</span></div><div class="line">//越界溢出</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates[<span class="number">-4</span>]</div><div class="line">Traceback (most recent call last):</div><div class="line">  File<span class="string">"&lt;stdin&gt;"</span>. line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">IndexError: list index out of range</div><div class="line"></div><div class="line">  //追加元素</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates.append(<span class="string">'Boy'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates</div><div class="line">[<span class="string">'Reus'</span>, <span class="string">'Reus1'</span>, <span class="string">'Reus2'</span>, <span class="string">'Boy'</span>]</div><div class="line"></div><div class="line">//插入元素到指定位置</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates.insert(<span class="number">1</span>,<span class="string">'May'</span>)</div><div class="line">[<span class="string">'Reus'</span>, <span class="string">'May'</span>, <span class="string">'Reus1'</span>, <span class="string">'Reus2'</span>, <span class="string">'Boy'</span>]</div><div class="line"></div><div class="line">//删除末尾元素</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates.pop()</div><div class="line"><span class="string">'Boy'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates </div><div class="line">[<span class="string">'Reus'</span>, <span class="string">'May'</span>, <span class="string">'Reus1'</span>, <span class="string">'Reus2'</span>]</div><div class="line"></div><div class="line">//删除指定位置元素</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates.pop(<span class="number">1</span>)</div><div class="line"><span class="string">'May'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates</div><div class="line">[<span class="string">'Reus'</span>, <span class="string">'Reus1'</span>, <span class="string">'Reus2'</span>]</div><div class="line"></div><div class="line">//替换元素</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates[<span class="number">1</span>] = <span class="string">'Boy'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>classmates</div><div class="line">[<span class="string">'Reus'</span>, <span class="string">'Boy'</span>, <span class="string">'Reus2'</span>]</div></pre></td></tr></table></figure>
+<p><code>list</code>里的数据类型也可以不同，可以是整型，可以是字符串，还可以是布尔值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>L = [<span class="string">'Apple'</span>, <span class="number">123</span>, <span class="keyword">True</span>]</div></pre></td></tr></table></figure>
+<p>也可以是另一个list</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>M = [<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>, <span class="number">4</span>], <span class="number">5</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>len(M)</div><div class="line"><span class="number">4</span></div></pre></td></tr></table></figure>
+<h3 id="tuple"><a href="#tuple" class="headerlink" title="tuple"></a>tuple</h3><p>tuple和list非常相似，但是tuple一旦初始化就不能修改（除非里面有个list)。有点像objc中的NSArray</p>
+<p>因为tuple不可变，所以相对来说是更安全的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">//定义tuple</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t = (<span class="number">1</span>,<span class="number">2</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t</div><div class="line">(<span class="number">1</span>, <span class="number">2</span>)</div><div class="line"></div><div class="line">//定义一个空的tuple</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t =()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t </div><div class="line">()</div><div class="line"></div><div class="line">//定义一个元素的tuple</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t = (<span class="number">1</span>,)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>t </div><div class="line">(<span class="number">1</span>,)</div><div class="line">/**Python在显示只有一个的tuple时，也会加一个逗号，防止我们误解成数学上的括号**/</div></pre></td></tr></table></figure>
+<h1 id="条件判断"><a href="#条件判断" class="headerlink" title="条件判断"></a>条件判断</h1><p>Python中也有<code>if - else</code>语句</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">age = <span class="number">20</span></div><div class="line"><span class="keyword">if</span> age &gt;= <span class="number">18</span>:</div><div class="line">  	print(<span class="string">'your age is'</span>,age)</div><div class="line">    print(<span class="string">'adult'</span>)</div></pre></td></tr></table></figure>
+<p>如果<code>if</code>判断为<code>True</code>，就把缩进的两行print语句执行了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">age = <span class="number">3</span></div><div class="line"><span class="keyword">if</span> age &gt;= <span class="number">18</span>:</div><div class="line">  print(<span class="string">'adult'</span>)</div><div class="line"><span class="keyword">elif</span> age &gt;=<span class="number">6</span>:</div><div class="line">  print(<span class="string">'tennager'</span>)</div><div class="line"><span class="keyword">else</span>:</div><div class="line">  print(<span class="string">'kid'</span>)</div></pre></td></tr></table></figure>
+<p>和你想的一样，这个<code>elif</code>是<code>else if</code>的缩写</p>
+<p><code>if</code>的特点是从上往下判断，如果上面有一个判断为<code>True</code>，就会忽略掉剩下的<code>elif</code>和<code>else</code>。</p>
+<h1 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h1><p>Python的循环有两种，一种是<code>for...in</code>循环，另一种是<code>while</code>循环</p>
+<h2 id="for-in"><a href="#for-in" class="headerlink" title="for..in"></a>for..in</h2><p><code>for x in ...</code>循环就是把每个元素带入变量<code>x</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">//<span class="number">1</span><span class="number">-10</span>累加</div><div class="line">sum = <span class="number">0</span></div><div class="line"><span class="keyword">for</span> x <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]:</div><div class="line">  	sum = sum + x</div><div class="line">print(sum)</div></pre></td></tr></table></figure>
+<p>但只做累加  想加到1000页不可能一直手写。还好有<code>range()</code>函数，可生成一个整数序列，再通过<code>list()</code>可以转换为list</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(<span class="number">5</span>))</div><div class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div></pre></td></tr></table></figure>
+<h2 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h2><p>这个循环大家学啥语言基本都会遇到，也就不多赘述了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">sum = <span class="number">0</span></div><div class="line">n = <span class="number">99</span></div><div class="line"><span class="keyword">while</span> n &gt; <span class="number">0</span>:      //只要条件为真就一直循环</div><div class="line">  sum = sum + n</div><div class="line">  n = n - <span class="number">2</span></div><div class="line">print(sum)</div></pre></td></tr></table></figure>
+<h1 id="dict和set"><a href="#dict和set" class="headerlink" title="dict和set"></a>dict和set</h1><h2 id="dict"><a href="#dict" class="headerlink" title="dict"></a>dict</h2><p>Python内置了字典，也就是dict(dictionary)。和objc一样，使用键-值(key-value)存储。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">'Michael'</span>:<span class="number">95</span>, <span class="string">'Bob'</span>:<span class="number">75</span>, <span class="string">'Tracy'</span>:<span class="number">85</span>&#125;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d[<span class="string">'Michael'</span>]</div><div class="line"><span class="number">95</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d[<span class="string">'Adam'</span>] = <span class="number">67</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d[<span class="string">'Adam'</span>]</div><div class="line"><span class="number">67</span></div></pre></td></tr></table></figure>
+<p>一个key只对应一个value没所以多次对一个key放入value，后面的值会覆盖掉前面。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>d[<span class="string">'jack'</span>] = <span class="number">90</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d[<span class="string">'jack'</span>] </div><div class="line"><span class="number">90</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d[<span class="string">'jack'</span>] = <span class="number">88</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d[<span class="string">'jack'</span>]</div><div class="line"><span class="number">88</span></div><div class="line"></div><div class="line">//检查key是否存在</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'Thomas'</span> <span class="keyword">in</span> d</div><div class="line"><span class="keyword">False</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d.get(<span class="string">'Thomas'</span>)      //可返回<span class="keyword">None</span>(交互命令行不显示结果)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d.get(<span class="string">'Thomas'</span>,<span class="number">-1</span>)	//或者自己写的value</div><div class="line"><span class="number">-1</span></div></pre></td></tr></table></figure>
+<p>dict内部存放的顺序和key放入的顺序没有关系。</p>
+<p>dict的key必须是不可变对象</p>
+<h2 id="set"><a href="#set" class="headerlink" title="set"></a>set</h2><p>set和dict类似，也是一组key的集合，但是不存value。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>s = set([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s</div><div class="line">&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</div><div class="line">//因为key不能重复，所以set中重复元素自动被过滤</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s = set&#123;[<span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>]&#125;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s </div><div class="line">&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</div><div class="line"></div><div class="line">//添加元素</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s.add(<span class="number">4</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s </div><div class="line">&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s.add(<span class="number">4</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s </div><div class="line">&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</div><div class="line"></div><div class="line"></div><div class="line">//删除元素</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s.remove(<span class="number">4</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s</div><div class="line">&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</div></pre></td></tr></table></figure>
+<p>set可看成数学意义上的无序无重复元素的集合，所以两个st可以做交并集等操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>s1 = set([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s2 = set([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s1 &amp; s2</div><div class="line">&#123;<span class="number">2</span>, <span class="number">3</span>&#125;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>s1 | s2</div><div class="line">&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</div></pre></td></tr></table></figure>
+<p><strong>set同样不能放入可变对象</strong></p>
+<h1 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h1><h2 id="调用函数"><a href="#调用函数" class="headerlink" title="调用函数"></a>调用函数</h2><p>Python内置了很多函数，我们可以直接调用(比如绝对值函数abs)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">//调用abs函数</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>abs(<span class="number">100</span>)</div><div class="line"><span class="number">100</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>abs(<span class="number">-20</span>)</div><div class="line"><span class="number">20</span></div></pre></td></tr></table></figure>
+<p>如果传入的参数不对，会报<code>TypeError</code>的错误</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">//数据类型转换</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>int(<span class="number">12.34</span>)</div><div class="line"><span class="number">12</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>str(<span class="number">1.23</span>)</div><div class="line"><span class="string">'1.23'</span></div><div class="line"></div><div class="line">//把函数名赋给变量</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a = abs</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a(<span class="number">-1</span>)</div><div class="line"><span class="number">1</span></div></pre></td></tr></table></figure>
+<h2 id="定义函数"><a href="#定义函数" class="headerlink" title="定义函数"></a>定义函数</h2><p>在Python中，定义一个函数要使用<code>def</code>语句，依次写出函数名、括号、括号中的参数和冒号，最后，在缩进块中编写函数体，用<code>return</code>返回。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//自定义函数</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_abs</span><span class="params">(x)</span>:</span></div><div class="line">  <span class="keyword">if</span> x &gt;= <span class="number">0</span>:</div><div class="line">    <span class="keyword">return</span> x</div><div class="line">  <span class="keyword">else</span>:</div><div class="line">    <span class="keyword">return</span> -x</div></pre></td></tr></table></figure>
+<p>如果我们把<code>my_abs()</code>的函数定义保存为<code>abstest.py</code>，那么，可以在该目录下启动Python解释器。用<code>from abstest import my_abs</code>来导入<code>my_abs()</code>函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">//定义空函数</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">nop</span><span class="params">()</span>:</span></div><div class="line">  <span class="keyword">pass</span></div></pre></td></tr></table></figure>
+<p><code>pass</code>可用来做占位符，比如我们还没想好写什么，可以先放一个<code>pass</code>让代码跑起来</p>
+<p><strong>Python是可以返回多个值的</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">move</span><span class="params">(x, y, step, angle=<span class="number">0</span>)</span>:</span></div><div class="line">  nx = x + step * math.cos(angle)</div><div class="line">  ny = y - step * math.sin(angle)</div><div class="line">  <span class="keyword">return</span> nx, ny</div></pre></td></tr></table></figure>
+<p>其实返回的值并不是严格意义上的多值，而是一个tuple。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><hr>
+<p><a href="https:www.liaoxuefeng.com" target="_blank" rel="external">廖雪峰的官方网站</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/17/About autorelease/" rel="next" title="奇特的autorelease">
+                <i class="fa fa-chevron-left"></i> 奇特的autorelease
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/18/about-property/" rel="prev" title="关于 @property">
+                关于 @property <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Reus"/>
+            
+              <p class="site-author-name" itemprop="name">Reus</p>
+              <p class="site-description motion-element" itemprop="description">纸上得来终觉浅，绝知此事要躬行</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/LuoYangCan/" title="GitHub &rarr; https://github.com/LuoYangCan/" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="http://weibo.com/u/1794015444/" title="Weibo &rarr; http://weibo.com/u/1794015444/" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/shi-liao-zhi-32-8/" title="ZhiHu &rarr; https://www.zhihu.com/people/shi-liao-zhi-32-8/" rel="noopener" target="_blank"><i class="fa fa-fw fa-ravelry"></i>ZhiHu</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.instagram.com/reus_97/" title="Instagram &rarr; https://www.instagram.com/reus_97/" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=k--m-L3q8v308PL90-X86-7y_v_98Pz_/" title="Mail &rarr; http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=k--m-L3q8v308PL90-X86-7y_v_98Pz_/" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope-o"></i>Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据"><span class="nav-number">2.</span> <span class="nav-text">数据</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#整数"><span class="nav-number">2.1.</span> <span class="nav-text">整数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浮点数"><span class="nav-number">2.2.</span> <span class="nav-text">浮点数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串"><span class="nav-number">2.3.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#打印字符串"><span class="nav-number">2.3.1.</span> <span class="nav-text">打印字符串</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#布尔值"><span class="nav-number">2.4.</span> <span class="nav-text">布尔值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#空值"><span class="nav-number">2.5.</span> <span class="nav-text">空值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变量"><span class="nav-number">2.6.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常量"><span class="nav-number">2.7.</span> <span class="nav-text">常量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#list与tuple"><span class="nav-number">2.8.</span> <span class="nav-text">list与tuple</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#list"><span class="nav-number">2.8.1.</span> <span class="nav-text">list</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tuple"><span class="nav-number">2.8.2.</span> <span class="nav-text">tuple</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#条件判断"><span class="nav-number">3.</span> <span class="nav-text">条件判断</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#循环"><span class="nav-number">4.</span> <span class="nav-text">循环</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#for-in"><span class="nav-number">4.1.</span> <span class="nav-text">for..in</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#while循环"><span class="nav-number">4.2.</span> <span class="nav-text">while循环</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dict和set"><span class="nav-number">5.</span> <span class="nav-text">dict和set</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#dict"><span class="nav-number">5.1.</span> <span class="nav-text">dict</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#set"><span class="nav-number">5.2.</span> <span class="nav-text">set</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#函数"><span class="nav-number">6.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调用函数"><span class="nav-number">6.1.</span> <span class="nav-text">调用函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定义函数"><span class="nav-number">6.2.</span> <span class="nav-text">定义函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Reus</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color='133,136,141' opacity='0.5' zIndex='-1' count='77' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+
+
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick';
+  guest = guest.split(',').filter(function (item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: true,
+    appId: 'hngI9j2Iofa06NjsGk3KaW10-gzGzoHsz',
+    appKey: '6aQdqWV2m2WjAEy0CrMbGDjp',
+    placeholder: '说点什么……',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+</script>
+
+
+
+  
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log(`Failed to save Visitor num, with error message: ${responseJSON.error}`);
+              })
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! More info at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'hngI9j2Iofa06NjsGk3KaW10-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'hngI9j2Iofa06NjsGk3KaW10-gzGzoHsz',
+                'X-LC-Key': '6aQdqWV2m2WjAEy0CrMbGDjp',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext"/>
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg?v=6.7.0" color="#222">
+
+
+  <link rel="manifest" href="/images/android-chrome-96x96.png">
+
+
+  <meta name="msapplication-config" content="/images/browserconfig.xml"/>
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言　　作为 iOS 开发者，难免会遇到一些 “一个 View 需要基于另一个 View 的消失或出现变更约束”的需求。我之前的做法是选择用 Masnory 将两个约束手动设置成 deactivate 和 activate，在需要的时候变更属性就可以达到。或者使用约束优先级来做，不过约束优先级就不能只依靠 hidden 属性了，需要的可能是 removefromsuperView。 　　苹果在 i">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="拥抱 UIStackView">
+<meta property="og:url" content="http://yoursite.com/2019/09/01/aboutStackView/index.html">
+<meta property="og:site_name" content="阿灿的大树洞">
+<meta property="og:description" content="前言　　作为 iOS 开发者，难免会遇到一些 “一个 View 需要基于另一个 View 的消失或出现变更约束”的需求。我之前的做法是选择用 Masnory 将两个约束手动设置成 deactivate 和 activate，在需要的时候变更属性就可以达到。或者使用约束优先级来做，不过约束优先级就不能只依靠 hidden 属性了，需要的可能是 removefromsuperView。 　　苹果在 i">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/img/stackView/stackViewAttribute.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/Alignment_Fill.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/Alignment_Leading.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/Alignment_Top.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/Alignment_FirstBaseLine.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/Alignment_LastBaseLine.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/Alignment_Center.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/Alignment_Trailing.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/Alignment_Bottom.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/DistributionFill.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/DistributionFillEqually.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/DistributionFillProportionally.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/DistributionEqualSpacing.png">
+<meta property="og:image" content="http://yoursite.com/img/stackView/DistributionEqualCentering.png">
+<meta property="og:updated_time" content="2019-11-10T07:00:43.249Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="拥抱 UIStackView">
+<meta name="twitter:description" content="前言　　作为 iOS 开发者，难免会遇到一些 “一个 View 需要基于另一个 View 的消失或出现变更约束”的需求。我之前的做法是选择用 Masnory 将两个约束手动设置成 deactivate 和 activate，在需要的时候变更属性就可以达到。或者使用约束优先级来做，不过约束优先级就不能只依靠 hidden 属性了，需要的可能是 removefromsuperView。 　　苹果在 i">
+<meta name="twitter:image" content="http://yoursite.com/img/stackView/stackViewAttribute.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="阿灿的大树洞" type="application/atom+xml"/>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/01/aboutStackView/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>拥抱 UIStackView | 阿灿的大树洞</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+      <a href="https://github.com/LuoYangCan" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿灿的大树洞</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">物极必反，否极泰来</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tag"></i> <br/>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user-circle"></i> <br/>关于我</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/01/aboutStackView/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Reus"/>
+      <meta itemprop="description" content="纸上得来终觉浅，绝知此事要躬行"/>
+      <meta itemprop="image" content="/images/avatar.gif"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿灿的大树洞"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">拥抱 UIStackView
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-01 14:31:36" itemprop="dateCreated datePublished" datetime="2019-09-01T14:31:36+08:00">2019-09-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-11-10 15:00:43" itemprop="dateModified" datetime="2019-11-10T15:00:43+08:00">2019-11-10</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/01/aboutStackView/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/09/01/aboutStackView/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+            <span id="/2019/09/01/aboutStackView/" class="leancloud_visitors" data-flag-title="拥抱 UIStackView">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>　　作为 iOS 开发者，难免会遇到一些 “一个 View 需要基于另一个 View 的消失或出现变更约束”的需求。我之前的做法是选择用 <code>Masnory</code> 将两个约束手动设置成 <code>deactivate</code> 和 <code>activate</code>，在需要的时候变更属性就可以达到。或者使用约束优先级来做，不过约束优先级就不能只依靠 <code>hidden</code> 属性了，需要的可能是 <code>removefromsuperView</code>。</p>
+<p>　　苹果在 iOS 9 之后推出了 <code>UIStackView</code>，它可以实现上述需求的自动化处理，让我们的代码更加简洁易读。之前因为开发者们向下兼容版本的原则导致运用的并不太多，但是随着现在 iOS 13 的发布，开发者们也都开始逐步放弃兼容 iOS 8了。这就意味着我们可以随心所欲的在我们的项目中使用 <code>UIStackView</code> 了 。</p>
+<a id="more"></a>
+<h1 id="关于-UIStackView"><a href="#关于-UIStackView" class="headerlink" title="关于 UIStackView"></a>关于 UIStackView</h1><p>　　<code>UIStackView</code>是<code>UIView</code>的子类，只有它并不能达到呈现视图的效果，我们要做的是把控件放入<code>stackView</code>里，让它来帮助我们管理这些控件的约束。</p>
+<p>　　<code>stackView</code>有两种方式可以使用，一就是使用<code>StoryBoard</code>拖入一个<code>stackView</code>，二是使用代码布局加入<code>UIStackView</code>，并<code>addArrangeView</code>控件来达到约束效果。</p>
+<p>　　因为平时使用的代码进行布局而非<code>StoryBoard</code>，所以本文会以代码的角度来走进<code>UIStackView</code></p>
+<h2 id="UIStackView-的属性"><a href="#UIStackView-的属性" class="headerlink" title="UIStackView 的属性"></a>UIStackView 的属性</h2><ul>
+<li>Axis: 将<code>stackView</code>里的子视图设置成垂直布局或水平布局</li>
+<li>Alignment: 子视图对齐方式</li>
+<li>Distribution: 子视图的分布比例</li>
+<li>Spacing: 子视图间距</li>
+</ul>
+<p><img src="/img/stackView/stackViewAttribute.png" alt="stackView属性"></p>
+<h3 id="Axis"><a href="#Axis" class="headerlink" title="Axis"></a>Axis</h3><p>　　<code>Axis</code> 属性从他的名字和他的值<code>vertical</code>和<code>horizontal</code>就可以看出他是决定<code>stackView</code>轴线的属性。</p>
+<ul>
+<li><p>vertical: 使 <strong>stackView</strong> 里的对象垂直排列</p>
+</li>
+<li><p>horizontal: 使 <strong>stackView</strong> 里的对象水平排列</p>
+</li>
+</ul>
+<h3 id="Alignment"><a href="#Alignment" class="headerlink" title="Alignment"></a>Alignment</h3><p>　　<code>Alignment</code>属性的值就有些多了，根据设置它的值，来决定子视图的摆放样式。</p>
+<p><strong>Fill</strong></p>
+<p>　　<code>Fill</code>属性使子视图填满<code>stackView</code>，<code>Vertical</code>模式时则是子视图宽填满，<code>Horizontal</code>模式的时候是子视图高填满。</p>
+<p><img src="/img/stackView/Alignment_Fill.png" alt="Fill"></p>
+<p><strong>Leading</strong></p>
+<p>　　使<code>Vertical</code>模式下的子视图向左对齐，相当于<code>Horizontal</code>模式下的<code>top</code>对齐模式旋转90°。</p>
+<p><img src="/img/stackView/Alignment_Leading.png" alt="Leading"></p>
+<p><strong>Top</strong></p>
+<p>　　使<code>Horizontal</code>模式下的子视图顶部对齐。</p>
+<p><img src="/img/stackView/Alignment_Top.png" alt="Top"></p>
+<p><strong>FirstBaseline</strong></p>
+<p>　　使子视图根据第一个子视图文字的第一行对齐（只在<code>Horizontal</code>模式下生效）</p>
+<p><img src="/img/stackView/Alignment_FirstBaseLine.png" alt="FirstBaseline"></p>
+<p><strong>LastBaseline</strong></p>
+<p>　　使子视图根据首个子视图文字的最后一行对齐（只在<code>Horizontal</code>模式下生效）</p>
+<p><img src="/img/stackView/Alignment_LastBaseLine.png" alt="LastBaseLine"></p>
+<p><strong>Center</strong></p>
+<p>　　使子视图中央对齐</p>
+<p><img src="/img/stackView/Alignment_Center.png" alt="Center"></p>
+<p><strong>Trailing</strong></p>
+<p>　　<code>Vertical</code>模式下的子视图尾部（右侧）对齐</p>
+<p><img src="/img/stackView/Alignment_Trailing.png" alt="Trailing"></p>
+<p><strong>Bottom</strong></p>
+<p>　　<code>Horizontal</code>模式下子视图尾部（下方）对齐</p>
+<p><img src="/img/stackView/Alignment_Bottom.png" alt="Alignment_Bottom"></p>
+<h3 id="Distribution"><a href="#Distribution" class="headerlink" title="Distribution"></a>Distribution</h3><p>　　属性作用于子视图上，用于子视图的布局</p>
+<p><strong>Fill</strong></p>
+<p>　　使子视图的宽/高（根据<code>Axis</code>决定）充满<code>stackView</code>，它会优先压缩<code>hugging</code>优先级低的子视图。</p>
+<p><img src="/img/stackView/DistributionFill.png" alt="DistributionFill"></p>
+<p><strong>FillEqually</strong></p>
+<p>　　使子视图的宽/高（根据<code>Axis</code>决定）相等排列，所有子视图都会被拉伸或压缩。</p>
+<p><img src="/img/stackView/DistributionFillEqually.png" alt="DistributionFillEqually"></p>
+<p><strong>FillPropoetionally</strong></p>
+<p>　　根据子视图的比例来拉伸或压缩宽/高。如<code>Horizontal</code>下的三个子视图的宽度比是 1:2:3 ，那根据<code>stackView</code>的大小，子视图会被拉伸或者压缩，但是他们的宽度比始终是 1:2:3</p>
+<p><img src="/img/stackView/DistributionFillProportionally.png" alt="DistributionFillProportionally"></p>
+<p><strong>EqualSpacing</strong></p>
+<p>　　使子视图宽高不变，中间等距排列（自动计算间距使得子控件充满<code>stackView</code>）</p>
+<p><img src="/img/stackView/DistributionEqualSpacing.png" alt="DistributionEqualSpacing"></p>
+<p><strong>EqualCentring</strong></p>
+<p>　　使子视图的中心点之间的距离保持一致，有点类似于<code>EqualSpacing</code></p>
+<p><img src="/img/stackView/DistributionEqualCentering.png" alt="DistributionEqualCentering"></p>
+<h3 id="Spacing"><a href="#Spacing" class="headerlink" title="Spacing"></a>Spacing</h3><p>　　控制子视图之间的间隔，会优先生效。</p>
+<p>　　如在<code>FillEqually</code>情况下，子视图设置了<code>Spacing</code>，则子视图之间会有固定间隔，且子视图的宽/高被压缩。</p>
+<h2 id="UIStackView的使用"><a href="#UIStackView的使用" class="headerlink" title="UIStackView的使用"></a>UIStackView的使用</h2><p>　　<code>stackView</code>的使用非常方便，只需要在初始化的时候设置上文的属性，并且将子视图<code>addArrangedSubview</code>进<code>stackView</code>就可以实现布局了。当一个子视图被<code>remove</code>或<code>hidden</code>时，在<code>stackView</code>里的其他子视图就会自动调整。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 示例</span></div><div class="line"><span class="built_in">UIStackView</span> *stackView = [[<span class="built_in">UIStackView</span> alloc] init];</div><div class="line">stackView.alignment = <span class="built_in">UIStackViewAlignmentLeading</span>;</div><div class="line">stackView.axis = <span class="built_in">UILayoutConstraintAxisVertical</span>;</div><div class="line">stackView.spacing = <span class="number">2</span>;</div><div class="line">[stackView addArrangedSubView:View1];</div><div class="line">[stackView addArrangedSubView:View2]; <span class="comment">// View2会显示在View1的下方且间隔为2</span></div></pre></td></tr></table></figure>
+<p>　　熟悉了<code>stackView</code>的使用之后，我们会发现我们大多数用<code>stackView</code>都是用于解决等距排列的需求。</p>
+<p>　　但我们偶尔还会遇到一些子视图之间间隔不等但还需要自动排列控件的情况，这种需求我们第一选择可能不会使用<code>stackView</code>。</p>
+<p>　　事实上，<code>stackView</code>里还有一个<code>setCustomSpacing:afterView:</code>方法，用来设置某个特定 View 以后的间隔，来达到控件不同间隔的效果。但是这个方法只在<code>iOS 11</code>以上的系统才能生效，所以现有情况下，我们可以使用空白的 View 去填充一些空白，来达到子视图之间间隔不相同的效果。</p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>　　<code>UIStackView</code>是苹果公司很早就退出的一套约束管理控件，但是因为兼容系统版本的问题，我们迟迟没有全面用上。但是现在已经是<code>iOS 13</code>的时代了，我们完全可以张开双手，去拥抱<code>stackView</code>，让我们的代码更加简洁有效。</p>
+<p>　　同时希望<code>Swift UI</code>普及的那一天快一点到来。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/03/Can-t-see-face/" rel="next" title="《看不见的脸》">
+                <i class="fa fa-chevron-left"></i> 《看不见的脸》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Reus"/>
+            
+              <p class="site-author-name" itemprop="name">Reus</p>
+              <p class="site-description motion-element" itemprop="description">纸上得来终觉浅，绝知此事要躬行</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/LuoYangCan/" title="GitHub &rarr; https://github.com/LuoYangCan/" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="http://weibo.com/u/1794015444/" title="Weibo &rarr; http://weibo.com/u/1794015444/" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/shi-liao-zhi-32-8/" title="ZhiHu &rarr; https://www.zhihu.com/people/shi-liao-zhi-32-8/" rel="noopener" target="_blank"><i class="fa fa-fw fa-ravelry"></i>ZhiHu</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.instagram.com/reus_97/" title="Instagram &rarr; https://www.instagram.com/reus_97/" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=k--m-L3q8v308PL90-X86-7y_v_98Pz_/" title="Mail &rarr; http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=k--m-L3q8v308PL90-X86-7y_v_98Pz_/" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope-o"></i>Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于-UIStackView"><span class="nav-number">2.</span> <span class="nav-text">关于 UIStackView</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#UIStackView-的属性"><span class="nav-number">2.1.</span> <span class="nav-text">UIStackView 的属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Axis"><span class="nav-number">2.1.1.</span> <span class="nav-text">Axis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Alignment"><span class="nav-number">2.1.2.</span> <span class="nav-text">Alignment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Distribution"><span class="nav-number">2.1.3.</span> <span class="nav-text">Distribution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spacing"><span class="nav-number">2.1.4.</span> <span class="nav-text">Spacing</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UIStackView的使用"><span class="nav-number">2.2.</span> <span class="nav-text">UIStackView的使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后记"><span class="nav-number">3.</span> <span class="nav-text">后记</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Reus</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color='133,136,141' opacity='0.5' zIndex='-1' count='77' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+
+
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick';
+  guest = guest.split(',').filter(function (item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: true,
+    appId: 'hngI9j2Iofa06NjsGk3KaW10-gzGzoHsz',
+    appKey: '6aQdqWV2m2WjAEy0CrMbGDjp',
+    placeholder: '说点什么……',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+</script>
+
+
+
+  
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log(`Failed to save Visitor num, with error message: ${responseJSON.error}`);
+              })
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! More info at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'hngI9j2Iofa06NjsGk3KaW10-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'hngI9j2Iofa06NjsGk3KaW10-gzGzoHsz',
+                'X-LC-Key': '6aQdqWV2m2WjAEy0CrMbGDjp',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

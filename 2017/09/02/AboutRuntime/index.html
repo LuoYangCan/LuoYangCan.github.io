@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext"/>
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg?v=6.7.0" color="#222">
+
+
+  <link rel="manifest" href="/images/android-chrome-96x96.png">
+
+
+  <meta name="msapplication-config" content="/images/browserconfig.xml"/>
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="曾觉得 iOS 很好学，也想着学一段时间就可以精通这门语言，但是随着开发的越来越深入，才能意识到，iOS 绝不像外表这样简单，他的内涵真是太深了，感觉自己真是一个什么也不知道的 Objc 小白。 Runtime 和消息发送机制是理解 iOS 运行过程避不开的一道坎，虽然平时很少用，但是却是我们 Objc 程序员需要了解的。 ​">
+<meta name="keywords" content="iOS,runtime">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Objc 的消息发送机制与 Runtime">
+<meta property="og:url" content="http://yoursite.com/2017/09/02/AboutRuntime/index.html">
+<meta property="og:site_name" content="阿灿的大树洞">
+<meta property="og:description" content="曾觉得 iOS 很好学，也想着学一段时间就可以精通这门语言，但是随着开发的越来越深入，才能意识到，iOS 绝不像外表这样简单，他的内涵真是太深了，感觉自己真是一个什么也不知道的 Objc 小白。 Runtime 和消息发送机制是理解 iOS 运行过程避不开的一道坎，虽然平时很少用，但是却是我们 Objc 程序员需要了解的。 ​">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/img/objc_msgsend.jpg">
+<meta property="og:image" content="http://yoursite.com/img/超类关系图.png">
+<meta property="og:image" content="http://yoursite.com/img/class_data_bits_t.png">
+<meta property="og:updated_time" content="2019-11-10T07:00:43.234Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Objc 的消息发送机制与 Runtime">
+<meta name="twitter:description" content="曾觉得 iOS 很好学，也想着学一段时间就可以精通这门语言，但是随着开发的越来越深入，才能意识到，iOS 绝不像外表这样简单，他的内涵真是太深了，感觉自己真是一个什么也不知道的 Objc 小白。 Runtime 和消息发送机制是理解 iOS 运行过程避不开的一道坎，虽然平时很少用，但是却是我们 Objc 程序员需要了解的。 ​">
+<meta name="twitter:image" content="http://yoursite.com/img/objc_msgsend.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="阿灿的大树洞" type="application/atom+xml"/>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/02/AboutRuntime/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Objc 的消息发送机制与 Runtime | 阿灿的大树洞</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+      <a href="https://github.com/LuoYangCan" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿灿的大树洞</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">物极必反，否极泰来</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tag"></i> <br/>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user-circle"></i> <br/>关于我</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/02/AboutRuntime/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Reus"/>
+      <meta itemprop="description" content="纸上得来终觉浅，绝知此事要躬行"/>
+      <meta itemprop="image" content="/images/avatar.gif"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿灿的大树洞"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Objc 的消息发送机制与 Runtime
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-09-02 12:19:55" itemprop="dateCreated datePublished" datetime="2017-09-02T12:19:55+08:00">2017-09-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-11-10 15:00:43" itemprop="dateModified" datetime="2019-11-10T15:00:43+08:00">2019-11-10</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/09/02/AboutRuntime/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2017/09/02/AboutRuntime/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+            <span id="/2017/09/02/AboutRuntime/" class="leancloud_visitors" data-flag-title="Objc 的消息发送机制与 Runtime">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>曾觉得 iOS 很好学，也想着学一段时间就可以精通这门语言，但是随着开发的越来越深入，才能意识到，iOS 绝不像外表这样简单，他的内涵真是太深了，感觉自己真是一个什么也不知道的 Objc 小白。</p>
+<p>Runtime 和消息发送机制是理解 iOS 运行过程避不开的一道坎，虽然平时很少用，但是却是我们 Objc 程序员需要了解的。</p>
+<p>​    <a id="more"></a></p>
+<h1 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h1><hr>
+<p>因为Objc是一门动态语言，所以它总会在运行时（而不是编译时）进行工作。所以光有一个编译器是不够的，还需要一个运行时系统（runtime system）执行编译后代码。这便是Runtime系统，它是整个Objc运行框架的基石。</p>
+<h2 id="Objc与Runtime的交互"><a href="#Objc与Runtime的交互" class="headerlink" title="Objc与Runtime的交互"></a>Objc与Runtime的交互</h2><hr>
+<p><strong>objc从三种不同的层级上与Runtime系统交互，分别是</strong>：</p>
+<h3 id="Objective-C-源代码"><a href="#Objective-C-源代码" class="headerlink" title="Objective-C 源代码"></a>Objective-C 源代码</h3><p>部分情况下，runtime都是系统在幕后执行，我们只需要在前台好好写Objc代码就行。</p>
+<p>消息执行会使用到一些编译器为实现动态语言特性而创建的数据结构和函数。</p>
+<p><strong>Objc中的类、方法和协议等在runtime中都由一些数据结构定义</strong></p>
+<h3 id="NSObject的方法"><a href="#NSObject的方法" class="headerlink" title="NSObject的方法"></a>NSObject的方法</h3><p>Cocoa中大多数类都继承于<code>NSObject</code>类，所以也就继承了它的方法（NSProxy除外）。</p>
+<p>NSObject中有许多的方法，自然也有许多作用，比如</p>
+<ul>
+<li>抽象接口作用，比如<code>description</code>方法需要重载它并为你定义的类提供描述内容。</li>
+<li>在运行时获得类的信息并检查一些特性，比如<ul>
+<li><code>class</code>返回对象的类</li>
+<li><code>isKindOfClass:</code>和<code>isMemberofClass:</code>则检查对象是否在指定的类继承体系中。</li>
+<li><code>respondsToSelector:</code>检查对象能否响应指定消息（是否有指定方法）。</li>
+<li><code>conformsToProtocol</code>检查对象是否实现了指定协议方法</li>
+<li><code>methodForSelector:</code>返回指定方法实现的地址</li>
+</ul>
+</li>
+</ul>
+<h3 id="Runtime的函数"><a href="#Runtime的函数" class="headerlink" title="Runtime的函数"></a>Runtime的函数</h3><p>Runtime系统是一个有一系列函数和数据结构组成，具有公共接口的动态共享库。头文件在<code>/user/include/objc</code>中。在<a href="https://developer.apple.com/documentation/objectivec/objective_c_runtime" target="_blank" rel="external">Objective-C Runtime Reference</a>中有对Runtime函数的详细文档。</p>
+<h2 id="Runtime基础数据结构"><a href="#Runtime基础数据结构" class="headerlink" title="Runtime基础数据结构"></a>Runtime基础数据结构</h2><hr>
+<p>在一个类似[a someFuc]的方法调用中，编译阶段编译器并不知道someFuc要实现哪一段代码而只是确定了要向接受者发送someFuc消息，只有到运行的时候，才会发送消息进行方法的确定。这里我们可以看一下objc的底层实现。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//main.m</span></div><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[])&#123;</div><div class="line">    <span class="keyword">@autoreleasepool</span>&#123;</div><div class="line">        Person * p = [[Person alloc] init];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以上函数在底层其实是这样的</p>
+<p><img src="/img/objc_msgsend.jpg" alt="底层"></p>
+<p>如上图所示，其实Objc所有方法在底层都会变成一个函数，那就是<code>objc_msgSend()</code>。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">id</span> objc_msgSend ( <span class="keyword">id</span> <span class="keyword">self</span>, SEL op, ...);</div></pre></td></tr></table></figure>
+<p>这里面有两个参数值得注意，一个是<code>id</code>，一个是<code>SEL</code>，鉴于id比较复杂，我们先讲讲<code>SEL</code></p>
+<h3 id="SEL"><a href="#SEL" class="headerlink" title="SEL"></a>SEL</h3><p>它是<code>selector</code>在Objc中的表示类型。<code>selector</code>是方法选择器，相当于区分各个方法的一个ID，这个ID的数据结构就是SEL</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_selector *SEL;</div></pre></td></tr></table></figure>
+<p>我们可以用Objc编译器命令<code>@selector()</code>或Runtime的<code>sel_registerName</code>获得一个<code>SEL</code>类型的方法选择器。</p>
+<h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><p>作为开发者，大家应该对id都不会陌生，它是一个指向类实例的指针</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_object *<span class="keyword">id</span>;</div></pre></td></tr></table></figure>
+<p>在这之中，<code>objc_object</code>是这样的一个结构体</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//objc-private.h</span></div><div class="line"><span class="keyword">struct</span> objc_object &#123;</div><div class="line">private:</div><div class="line">    isa_t isa;</div><div class="line"></div><div class="line">public:</div><div class="line"></div><div class="line">    <span class="comment">// ISA() assumes this is NOT a tagged pointer object</span></div><div class="line">    Class ISA();</div><div class="line"></div><div class="line">    <span class="comment">// getIsa() allows this to be a tagged pointer object</span></div><div class="line">    Class getIsa();</div><div class="line">    ... 此处省略其他方法声明</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结构体重包含一个<code>isa</code>指针，类型为<code>isa_t</code>根据<code>isa</code>就可以找到对象所属的类。</p>
+<p><code>isa</code>指针又涉及到引用计数原理的知识了，这里就不做详尽描述了。</p>
+<p>objc_object中又有属性值得我们注意</p>
+<h4 id="Class"><a href="#Class" class="headerlink" title="Class"></a>Class</h4><p><code>Class</code>其实是一个指向<code>objc_class</code>结构体的指针</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class *Class;</div></pre></td></tr></table></figure>
+<p>这个<code>objc_class</code>又包含很多方法了</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> objc_class : objc_object &#123;</div><div class="line">    <span class="comment">// Class ISA;</span></div><div class="line">    Class superclass;</div><div class="line">    cache_t cache;             <span class="comment">// formerly cache pointer and vtable</span></div><div class="line">    class_data_bits_t bits;    <span class="comment">// class_rw_t * plus custom rr/alloc flags</span></div><div class="line">    class_rw_t *data() &#123; </div><div class="line">        <span class="keyword">return</span> bits.data();</div><div class="line">    &#125;</div><div class="line">    ... 省略其他方法</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们可以看到<code>objc_class</code>继承于<code>objc_object</code>，所以我们可以说一个Objc类本来就是一个对象。</p>
+<p>为了处理类和对象的关系，runtime创建了一种叫<strong>元类（Meta Class）</strong>的东西，<strong>类对象所属类型就叫元类</strong>，它用来表述类对象本身所具备的元数据。这就是类方法的定义，每个类仅有一个类对象，每个类也只有一个与之相关的元类。</p>
+<p>当我们使用类似<code>[p alloc]</code>的类方法时，事实上是把这个消息发送给了一个类对象，这个类对象必须是一个元类的实例，而这个元类也是一个<strong>根元类(root meta class)</strong>的实例。所有元类都指向根元类为其超类。所有元类的方法列表都有能够响应消息的类方法。</p>
+<p>所以当<code>[p alloc]</code>这条消息发给类对象的时候，<code>objc_msgSend()</code>会去它的元类里面去查找能够响应消息的方法，如果找到了，然后就对这个类对象执行方法调用。</p>
+<p><img src="/img/超类关系图.png" alt="关系图"></p>
+<p>根据上图，我们可以看到方法，类，元类的关系。有趣的是<strong>根元类</strong>的超类是<strong>根类</strong>（根类在实际运用中就是<code>NSObject</code>），<code>isa</code>指向了自己。</p>
+<p>而<code>NSObject</code>的超类为<code>nil</code>，也就是说它没有超类。</p>
+<p>可以看到运行时一个类还关联了它的超类指针(superclass)，类名，成员变量，方法，缓存，还有附属协议。</p>
+<h5 id="cache-t"><a href="#cache-t" class="headerlink" title="cache_t"></a>cache_t</h5><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> cache_t &#123;</div><div class="line">    <span class="keyword">struct</span> bucket_t *_buckets;</div><div class="line">    mask_t _mask;</div><div class="line">    mask_t _occupied;</div><div class="line">    ... 省略其他方法</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>_buckets</code>存储<code>IMP</code>。<code>_mask</code>和<code>_occupied</code>对应<code>vtable</code>。</p>
+<p><code>cache</code>是优化的一个机制，如果我们实例对象每收到一个消息都去<code>isa</code>指向的类方法列表中遍历，那效率就太低了。</p>
+<p>所以系统会把调用的方法存到<code>cache</code>中，然后在收到消息后优先在<code>cache</code>中查找（理论上讲 如果一个方法被调用一次，那它就很有可能在今后还会被调用）。</p>
+<p><code>bucket_t</code>中存储了指针与IMP的键值对：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> bucket_t &#123;</div><div class="line">private:</div><div class="line">    cache_key_t _key;</div><div class="line">    IMP _imp;</div><div class="line"></div><div class="line">public:</div><div class="line">    <span class="keyword">inline</span> cache_key_t key() <span class="keyword">const</span> &#123; <span class="keyword">return</span> _key; &#125;</div><div class="line">    <span class="keyword">inline</span> IMP imp() <span class="keyword">const</span> &#123; <span class="keyword">return</span> (IMP)_imp; &#125;</div><div class="line">    <span class="keyword">inline</span> <span class="keyword">void</span> setKey(cache_key_t newKey) &#123; _key = newKey; &#125;</div><div class="line">    <span class="keyword">inline</span> <span class="keyword">void</span> setImp(IMP newImp) &#123; _imp = newImp; &#125;</div><div class="line"></div><div class="line">    <span class="keyword">void</span> set(cache_key_t newKey, IMP newImp);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>详细的细节都在<code>objc-cache.mm</code>文件中</p>
+<h5 id="class-data-bits-t"><a href="#class-data-bits-t" class="headerlink" title="class_data_bits_t"></a>class_data_bits_t</h5><p><code>class_data_bits_t</code>包含的信息太多了，主要有<code>class_rw_t</code>,<code>retain/release/autorelease/retaincount</code>和<code>alloc</code>等信息。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//objc-runtime-new.h</span></div><div class="line"><span class="keyword">struct</span> class_data_bits_t &#123;</div><div class="line"></div><div class="line">	<span class="comment">// Values are the FAST_ flags above.</span></div><div class="line">	uintptr_t bits;</div><div class="line">	class_rw_t* data() &#123;</div><div class="line">	   <span class="keyword">return</span> (class_rw_t *)(bits &amp; FAST_DATA_MASK);</div><div class="line">	&#125;</div><div class="line">... 省略其他方法</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>联系前面的<code>Class</code>，我们可以注意到<code>objc_class</code>的<code>data</code>方法返回的是<code>class_data_bits_t</code>的<code>data</code>方法，最终返回的是<code>class_rw_t</code>，有好几层。</p>
+<p>在<code>class_data_bits_t</code>里又包含了一个<code>bits</code>，这个指针跟不同的<code>FAST_</code>前缀的掩码做按位与操作，可获得不同的数据。<code>bits</code>在内存中每个位的含义有三种排列顺序：</p>
+<p><img src="/img/class_data_bits_t.png" alt="class_data_bits_t"></p>
+<p>64位不兼容中每个宏对应含义如下:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// class is a Swift class</span></div><div class="line"><span class="meta">#define FAST_IS_SWIFT           (1UL<span class="meta-string">&lt;&lt;0)</span></span></div><div class="line"><span class="meta"><span class="meta-string">// class's instances requires raw isa</span></span></div><div class="line"><span class="meta"><span class="meta-string">#define FAST_REQUIRES_RAW_ISA   (1UL&lt;&lt;1)</span></span></div><div class="line"><span class="meta"><span class="meta-string">// class or superclass has .cxx_destruct implementation</span></span></div><div class="line"><span class="meta"><span class="meta-string">//   This bit is aligned with isa_t-&gt;</span>hasCxxDtor to save an instruction.</span></div><div class="line"><span class="meta">#define FAST_HAS_CXX_DTOR       (1UL<span class="meta-string">&lt;&lt;2)</span></span></div><div class="line"><span class="meta"><span class="meta-string">// data pointer</span></span></div><div class="line"><span class="meta"><span class="meta-string">#define FAST_DATA_MASK          0x00007ffffffffff8UL</span></span></div><div class="line"><span class="meta"><span class="meta-string">// class or superclass has .cxx_construct implementation</span></span></div><div class="line"><span class="meta"><span class="meta-string">#define FAST_HAS_CXX_CTOR       (1UL&lt;&lt;47)</span></span></div><div class="line"><span class="meta"><span class="meta-string">// class or superclass has default alloc/allocWithZone: implementation</span></span></div><div class="line"><span class="meta"><span class="meta-string">// Note this is is stored in the metaclass.</span></span></div><div class="line"><span class="meta"><span class="meta-string">#define FAST_HAS_DEFAULT_AWZ    (1UL&lt;&lt;48)</span></span></div><div class="line"><span class="meta"><span class="meta-string">// class or superclass has default retain/release/autorelease/retainCount/</span></span></div><div class="line"><span class="meta"><span class="meta-string">//   _tryRetain/_isDeallocating/retainWeakReference/allowsWeakReference</span></span></div><div class="line"><span class="meta"><span class="meta-string">#define FAST_HAS_DEFAULT_RR     (1UL&lt;&lt;49)</span></span></div><div class="line"><span class="meta"><span class="meta-string">// summary bit for fast alloc path: !hasCxxCtor and </span></span></div><div class="line"><span class="meta"><span class="meta-string">//   !instancesRequireRawIsa and instanceSize fits into shiftedSize</span></span></div><div class="line"><span class="meta"><span class="meta-string">#define FAST_ALLOC              (1UL&lt;&lt;50)</span></span></div><div class="line"><span class="meta"><span class="meta-string">// instance size in units of 16 bytes</span></span></div><div class="line"><span class="meta"><span class="meta-string">//   or 0 if the instance size is too big in this field</span></span></div><div class="line"><span class="meta"><span class="meta-string">//   This field must be LAST</span></span></div><div class="line"><span class="meta"><span class="meta-string">#define FAST_SHIFTED_SIZE_SHIFT 51</span></span></div></pre></td></tr></table></figure>
+<p>在这里除了<code>FAST_DATA_MASK</code>是用一段空间储存数据外，其他宏都是用1bit存bool值。</p>
+<p><code>class_data_bits_t</code>提供了三个方法用于位操作：<code>getBit</code>,<code>setBits</code>和<code>clearBits</code></p>
+<p>而<code>FAST_DATA_MASK</code>的存储区域里面其实就是存储了指向<code>class_rw_t</code>的指针</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">class_rw_t* data() &#123;</div><div class="line">   <span class="keyword">return</span> (class_rw_t *)(bits &amp; FAST_DATA_MASK);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Category"><a href="#Category" class="headerlink" title="Category"></a>Category</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> category_t *Category;</div></pre></td></tr></table></figure>
+<p><code>Category</code>为现有的类提供了拓展，存储了类别中可以拓展的实例方法、实例属性和类方法、类属性(objc2016新增特性)。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> category_t &#123;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</div><div class="line">    classref_t cls;</div><div class="line">    <span class="keyword">struct</span> method_list_t *instanceMethods;</div><div class="line">    <span class="keyword">struct</span> method_list_t *classMethods;</div><div class="line">    <span class="keyword">struct</span> protocol_list_t *protocols;</div><div class="line">    <span class="keyword">struct</span> property_list_t *instanceProperties;</div><div class="line">    <span class="comment">// Fields below this point are not always present on disk.</span></div><div class="line">    <span class="keyword">struct</span> property_list_t *_classProperties;</div><div class="line"></div><div class="line">    method_list_t *methodsForMeta(<span class="keyword">bool</span> isMeta) &#123;</div><div class="line">        <span class="keyword">if</span> (isMeta) <span class="keyword">return</span> classMethods;</div><div class="line">        <span class="keyword">else</span> <span class="keyword">return</span> instanceMethods;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    property_list_t *propertiesForMeta(<span class="keyword">bool</span> isMeta, <span class="keyword">struct</span> header_info *hi);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>App 启动加载镜像文件的时候，会简介调用到<code>attachCategories</code>函数，完成向类中添加<code>Category</code>的工作。</p>
+<h4 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> method_t *Method;</div></pre></td></tr></table></figure>
+<p>它存储了方法名，方法类型和方法实现：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> method_t &#123;</div><div class="line">    SEL name;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *types;</div><div class="line">    IMP imp;</div><div class="line"></div><div class="line">    <span class="keyword">struct</span> SortBySELAddress :</div><div class="line">        public std::binary_function&lt;<span class="keyword">const</span> method_t&amp;,</div><div class="line">                                    <span class="keyword">const</span> method_t&amp;, <span class="keyword">bool</span>&gt;</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">bool</span> operator() (<span class="keyword">const</span> method_t&amp; lhs,</div><div class="line">                         <span class="keyword">const</span> method_t&amp; rhs)</div><div class="line">        &#123; <span class="keyword">return</span> lhs.name &lt; rhs.name; &#125;</div><div class="line">    &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>方法名类型为<code>SEL</code>，方法类型<code>types</code>是个<code>char</code>指针，存储着方法的参数类型和返回值类型。</p>
+<p><code>imp</code>指向了方法实现，其实是一个函数指针。</p>
+<h4 id="Ivar"><a href="#Ivar" class="headerlink" title="Ivar"></a>Ivar</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> ivar_t *Ivar;</div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">struct</span> ivar_t &#123;</div><div class="line">    int32_t *offset;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *type;</div><div class="line">    <span class="comment">// alignment is sometimes -1; use alignment() instead</span></div><div class="line">    uint32_t alignment_raw;</div><div class="line">    uint32_t size;</div><div class="line"></div><div class="line">    uint32_t alignment() <span class="keyword">const</span> &#123;</div><div class="line">        <span class="keyword">if</span> (alignment_raw == ~(uint32_t)<span class="number">0</span>) <span class="keyword">return</span> <span class="number">1</span>U &lt;&lt; WORD_SHIFT;</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span> &lt;&lt; alignment_raw;</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h4 id="IMP"><a href="#IMP" class="headerlink" title="IMP"></a>IMP</h4><p><code>IMP</code>在<code>objc.h</code>中为：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">void</span> (*IMP)(<span class="keyword">void</span> <span class="comment">/* id, SEL, ... */</span>);</div></pre></td></tr></table></figure>
+<p>它就是一个函数指针，由编译器生成。当我们发起一个Objc消息后，最终会执行什么代码，就由这个指针指定。<code>IMP</code>这个函数指针指向了方法的实现。</p>
+<h1 id="感悟"><a href="#感悟" class="headerlink" title="感悟"></a>感悟</h1><p>iOS Runtime真是博大精深，这还没走到最深层，就由一大堆底层概念，所以 学习之路漫漫啊。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/" target="_blank" rel="external">杨萧玉的博客</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/runtime/" rel="tag"># runtime</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/24/Reading/" rel="next" title="关于读书">
+                <i class="fa fa-chevron-left"></i> 关于读书
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/13/iOS_ARC/" rel="prev" title="iOS内存管理 - ARC">
+                iOS内存管理 - ARC <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Reus"/>
+            
+              <p class="site-author-name" itemprop="name">Reus</p>
+              <p class="site-description motion-element" itemprop="description">纸上得来终觉浅，绝知此事要躬行</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/LuoYangCan/" title="GitHub &rarr; https://github.com/LuoYangCan/" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="http://weibo.com/u/1794015444/" title="Weibo &rarr; http://weibo.com/u/1794015444/" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.zhihu.com/people/shi-liao-zhi-32-8/" title="ZhiHu &rarr; https://www.zhihu.com/people/shi-liao-zhi-32-8/" rel="noopener" target="_blank"><i class="fa fa-fw fa-ravelry"></i>ZhiHu</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.instagram.com/reus_97/" title="Instagram &rarr; https://www.instagram.com/reus_97/" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=k--m-L3q8v308PL90-X86-7y_v_98Pz_/" title="Mail &rarr; http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=k--m-L3q8v308PL90-X86-7y_v_98Pz_/" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope-o"></i>Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Runtime"><span class="nav-number">1.</span> <span class="nav-text">Runtime</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Objc与Runtime的交互"><span class="nav-number">1.1.</span> <span class="nav-text">Objc与Runtime的交互</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Objective-C-源代码"><span class="nav-number">1.1.1.</span> <span class="nav-text">Objective-C 源代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSObject的方法"><span class="nav-number">1.1.2.</span> <span class="nav-text">NSObject的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Runtime的函数"><span class="nav-number">1.1.3.</span> <span class="nav-text">Runtime的函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Runtime基础数据结构"><span class="nav-number">1.2.</span> <span class="nav-text">Runtime基础数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SEL"><span class="nav-number">1.2.1.</span> <span class="nav-text">SEL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#id"><span class="nav-number">1.2.2.</span> <span class="nav-text">id</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Class"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">Class</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#cache-t"><span class="nav-number">1.2.2.1.1.</span> <span class="nav-text">cache_t</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#class-data-bits-t"><span class="nav-number">1.2.2.1.2.</span> <span class="nav-text">class_data_bits_t</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Category"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">Category</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Method"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Ivar"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">Ivar</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IMP"><span class="nav-number">1.2.2.5.</span> <span class="nav-text">IMP</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#感悟"><span class="nav-number">2.</span> <span class="nav-text">感悟</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Reus</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color='133,136,141' opacity='0.5' zIndex='-1' count='77' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+
+
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick';
+  guest = guest.split(',').filter(function (item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: true,
+    appId: 'hngI9j2Iofa06NjsGk3KaW10-gzGzoHsz',
+    appKey: '6aQdqWV2m2WjAEy0CrMbGDjp',
+    placeholder: '说点什么……',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+</script>
+
+
+
+  
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log(`Failed to save Visitor num, with error message: ${responseJSON.error}`);
+              })
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! More info at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'hngI9j2Iofa06NjsGk3KaW10-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'hngI9j2Iofa06NjsGk3KaW10-gzGzoHsz',
+                'X-LC-Key': '6aQdqWV2m2WjAEy0CrMbGDjp',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
