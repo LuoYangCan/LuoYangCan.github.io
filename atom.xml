@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-11-10T07:00:43.249Z</updated>
+  <updated>2020-01-11T09:44:36.553Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,52 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Swift 初探</title>
+    <link href="http://yoursite.com/2020/01/05/Swift/"/>
+    <id>http://yoursite.com/2020/01/05/Swift/</id>
+    <published>2020-01-05T07:39:28.000Z</published>
+    <updated>2020-01-11T09:44:36.553Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>　　因为公司打算项目全面转 <code>Swift</code>，于是我与同事开始了漫长的 <code>Swift</code> 探索之路。初用的时候会很不习惯，因为<code>Swift</code>和<code>Objective-C</code>从语法上来说是两门完全不同的语言，<code>OC</code>延续了<code>C</code>系语言一贯的啰嗦，需要些很多的代码才能完善这个类或变量，而这些啰嗦的语句其实也深深的嵌入了项目之中，拖慢整个项目的编译进度，增大安装包（虽然不太明显）。</p>
+<p>　　这篇文章也不是<code>Swift</code>的教程，而是一名<code>OC</code>程序猿转<code>Swift</code>时所遇到的困难。</p>
+<a id="more"></a>
+<h1 id="Optional"><a href="#Optional" class="headerlink" title="Optional"></a>Optional</h1><p>　　<code>Swift</code>是一门更加安全的语言，相信很多和我一样的<code>OC</code>开发者在新建项目和变量的时候已经开始习惯了这样的方式</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NS_ASSUME_NONNULL_BEGIN</span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">AAPLList</span> : <span class="title">NSObject</span> &lt;<span class="title">NSCoding</span>, <span class="title">NSCopying</span>&gt;</span></div><div class="line"><span class="comment">// ...</span></div><div class="line">- (<span class="keyword">nullable</span> AAPLListItem *)itemWithName:(<span class="built_in">NSString</span> *)name;</div><div class="line">- (<span class="built_in">NSInteger</span>)indexOfItem:(AAPLListItem *)item;</div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">copy</span>, <span class="keyword">nullable</span>) <span class="built_in">NSString</span> *name;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">copy</span>, <span class="keyword">readonly</span>) <span class="built_in">NSArray</span> *allItems;</div><div class="line"><span class="comment">// ...</span></div><div class="line"><span class="keyword">@end</span></div><div class="line"><span class="built_in">NS_ASSUME_NONNULL_END</span></div><div class="line"></div><div class="line"><span class="comment">// --------------</span></div><div class="line"></div><div class="line"><span class="keyword">self</span>.list.name = <span class="literal">nil</span>;   <span class="comment">// okay</span></div><div class="line"></div><div class="line">AAPLListItem *matchingItem = [<span class="keyword">self</span>.list itemWithName:<span class="literal">nil</span>];  <span class="comment">// warning!</span></div></pre></td></tr></table></figure>
+<p>　　其中的 <code>NS_ASSUME_NONNULL_BEGIN</code>和<code>NS_ASSUME_NONNULL_END</code>还有<code>nullable</code>与之对应的<code>nonnull</code>就是用来增加安全性的设置。我们以前跑项目时经常遇到某个不应该为<code>nil</code>的对象突然变成<code>nil</code>的情况，其实这样是非常不安全的，但是在多线程的运行中，我们也不一定知道这个对象是在哪里变成<code>nil</code>的，所以这样的声明是非常有必要的。这样我们就可以清楚的知道这个对象是否可以为空，这样在传值的时就可以接收到警告，或者运行时就会崩溃方便定位。</p>
+<p>　　<code>Swift</code>的解决方式就是使用<code>Optional</code>，在<code>Swift</code>里我们经常会这样声明变量</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> str: <span class="type">String</span>?</div></pre></td></tr></table></figure>
+<p>　　这个问号就很精髓，它就是让这个没有初始化的变量变成一个<code>Optional</code>。<code>Optional</code>相当于向上封装了一层，代表<del>这个变量有值，或者这个变量没有值（废话）</del>，但是和不用<code>nullable</code>和<code>nonnull</code>的<code>OC</code>变量不同，你如果直接打印<code>str</code>，那你会发现它并不是<code>String</code>类型，而是一个<code>Optional</code>的类型，里边有<code>Optional.Some</code>和<code>Optional.None</code>两种类型，如果我们没有给他一个初值，那<code>Optional</code>就会返回<code>None</code>来告诉我们这个变量为<code>nil</code>，而如果我们想访问这个变量的值，那我们需要做的，就是<strong>解包</strong>。</p>
+<h2 id="解包"><a href="#解包" class="headerlink" title="解包"></a>解包</h2><p>　　常见的解包方式一般有两种，一种就是<del>比较暴力</del>的<code>!</code>和相对科学的<code>??</code>语法，而另一种则为<strong>可选绑定</strong></p>
+<h3 id="与"><a href="#与" class="headerlink" title="! 与 ??"></a>! 与 ??</h3><p>　　<code>!</code>通常用在我们知道这个值是必有的情况下，如果我们使用了<code>!</code>但这个值为<code>nil</code>，那就会引起崩溃，一般来说如果不是100%确定变量有值，是不推荐使用的。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> str: <span class="type">String</span>?</div><div class="line"></div><div class="line"><span class="keyword">let</span> temp = str!</div><div class="line"><span class="comment">// crash</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> str: <span class="type">String</span> = <span class="string">"123"</span></div><div class="line"></div><div class="line"><span class="keyword">let</span> temp = str!</div><div class="line"><span class="comment">// temp = "123"</span></div></pre></td></tr></table></figure>
+<p>　　另一种<code>??</code>是一个比较常规的方式，代表如果这个变量为<code>nil</code>，则变量为<code>??</code>之后的值。我们在<code>OC</code>中也会经常用三段表达式进行类似的判断（比如 <code>NSString *str = tempStr ?: @&quot;&quot;</code>，而<code>Swift</code>里的<code>??</code>会使这个表达式更加方便简单。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> str: <span class="type">String</span>?</div><div class="line"></div><div class="line"><span class="keyword">let</span> temp = str ?? <span class="string">""</span></div><div class="line"><span class="comment">// temp = ""</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> str: <span class="type">String</span> = <span class="string">"123"</span></div><div class="line"></div><div class="line"><span class="keyword">let</span> temp = str ?? <span class="string">""</span></div><div class="line"><span class="comment">// temp = "123"</span></div></pre></td></tr></table></figure>
+<h3 id="可选绑定"><a href="#可选绑定" class="headerlink" title="可选绑定"></a>可选绑定</h3><p>　　可选绑定是一种比较推荐的解包方法，除了麻烦一点，几乎没什么缺点。</p>
+<p>　　它是用一个变量去取<code>Optional</code>的值，再根据这个变量的值来进行操作。</p>
+<p>　　比较常见的是<code>if let</code>和 <code>guard let  else {return}</code>方法。多说无益，上代码。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> str1: <span class="type">String</span>?</div><div class="line"><span class="keyword">var</span> str2: <span class="type">String</span> = <span class="string">"123"</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">let</span> safeStr = str, safeStr2 = str2 &#123;</div><div class="line">    label1.text = safeStr</div><div class="line">    label2.text = safeStr2</div><div class="line">&#125;</div><div class="line"><span class="comment">// label1.text = nil</span></div><div class="line"><span class="comment">// label2.text = "123"</span></div><div class="line"></div><div class="line"><span class="keyword">guard</span> <span class="keyword">let</span> safeStr1 = str, safeStr2 = str2 <span class="keyword">else</span> &#123;<span class="keyword">return</span>&#125;</div><div class="line">label1.text = safeStr1</div><div class="line">label2.text = safeStr2</div><div class="line"><span class="comment">// label1.text = nil</span></div><div class="line"><span class="comment">// label2.text = nil</span></div><div class="line"></div><div class="line"><span class="keyword">guard</span> <span class="keyword">let</span> safeStr2 = str2 <span class="keyword">else</span> &#123;<span class="keyword">return</span>&#125;</div><div class="line">label2.text = safeStr2</div><div class="line"><span class="comment">// label2.text = "123"</span></div></pre></td></tr></table></figure>
+<p>　　由代码可见，<code>if let</code>方法在它的作用域内，我们可以用解包后安全的值进行操作。而<code>guard let  else {return}</code>拿到的安全值可以在这个方法的作用域内进行操作。具体选用哪种就需要根据开发者的需求来定了。</p>
+<p>　　还有一种可以将两种方式结合的解包方法，不过极不推荐，至于为什么，看代码就知道了！</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> str1: <span class="type">String</span>?</div><div class="line"><span class="keyword">var</span> str2: <span class="type">String</span> = <span class="string">"123"</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="number">_</span> = str2 &#123;</div><div class="line">    label2.text = str2! </div><div class="line">&#125;</div><div class="line"><span class="comment">// label2.text = "123"</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="number">_</span> = str1 &#123;</div><div class="line">    label2.text = str1!</div><div class="line">&#125;</div><div class="line"><span class="comment">// label2.text = nil</span></div><div class="line"></div><div class="line"><span class="keyword">guard</span> <span class="keyword">let</span> <span class="number">_</span> = str1 <span class="keyword">else</span> &#123;<span class="keyword">return</span>&#125;</div><div class="line">label1.text = str1!</div><div class="line"><span class="comment">// label1.text = nil</span></div><div class="line"></div><div class="line"><span class="keyword">guard</span> <span class="keyword">let</span> <span class="number">_</span> = str2 <span class="keyword">else</span> &#123;<span class="keyword">return</span>&#125;</div><div class="line">label2.text = str2!</div><div class="line"><span class="comment">// label2.text = "123"</span></div></pre></td></tr></table></figure>
+<p>　　因为<code>guard else</code>方法将<code>nil</code> 的变量<code>return</code>了，所以我们强制解包的时候不会有什么问题。但<code>if let</code>就不一样了，因为用了强制解包，根据语义应该是必定有值的，但是却并没有，这对于要写优雅代码的我们来说是个不好的写法。</p>
+<p>To be continue..</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;　　因为公司打算项目全面转 &lt;code&gt;Swift&lt;/code&gt;，于是我与同事开始了漫长的 &lt;code&gt;Swift&lt;/code&gt; 探索之路。初用的时候会很不习惯，因为&lt;code&gt;Swift&lt;/code&gt;和&lt;code&gt;Objective-C&lt;/code&gt;从语法上来说是两门完全不同的语言，&lt;code&gt;OC&lt;/code&gt;延续了&lt;code&gt;C&lt;/code&gt;系语言一贯的啰嗦，需要些很多的代码才能完善这个类或变量，而这些啰嗦的语句其实也深深的嵌入了项目之中，拖慢整个项目的编译进度，增大安装包（虽然不太明显）。&lt;/p&gt;
+&lt;p&gt;　　这篇文章也不是&lt;code&gt;Swift&lt;/code&gt;的教程，而是一名&lt;code&gt;OC&lt;/code&gt;程序猿转&lt;code&gt;Swift&lt;/code&gt;时所遇到的困难。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
+    
+      <category term="Swift" scheme="http://yoursite.com/tags/Swift/"/>
+    
+  </entry>
   
   <entry>
     <title>拥抱 UIStackView</title>
@@ -474,12 +520,12 @@
 </blockquote>
 <p>　　<a id="more"></a></p>
 
-        <div id="aplayer-aHLgNBOI" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-Wrrctyjt" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-aHLgNBOI"),
+            element: document.getElementById("aplayer-Wrrctyjt"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -592,12 +638,12 @@
 </blockquote>
 <p>　    <a id="more"></a></p>
 
-        <div id="aplayer-QTWHRGjy" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-xoDfHHHb" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-QTWHRGjy"),
+            element: document.getElementById("aplayer-xoDfHHHb"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -1460,12 +1506,12 @@
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><p>　　好久没看书了，一到放假，看书的效率就从一个月两三本，变成了一个月一本。有点惭愧。</p>
 <p>​    <a id="more"></a></p>
 
-        <div id="aplayer-HvjpXfwZ" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-YoefSOrU" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-HvjpXfwZ"),
+            element: document.getElementById("aplayer-YoefSOrU"),
             narrow: false,
             autoplay: true,
             showlrc: false,
