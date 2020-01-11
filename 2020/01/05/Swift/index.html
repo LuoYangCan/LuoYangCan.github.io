@@ -134,7 +134,7 @@
 <meta property="og:site_name" content="阿灿的大树洞">
 <meta property="og:description" content="前言　　因为公司打算项目全面转 Swift，于是我与同事开始了漫长的 Swift 探索之路。初用的时候会很不习惯，因为Swift和Objective-C从语法上来说是两门完全不同的语言，OC延续了C系语言一贯的啰嗦，需要些很多的代码才能完善这个类或变量，而这些啰嗦的语句其实也深深的嵌入了项目之中，拖慢整个项目的编译进度，增大安装包（虽然不太明显）。 　　这篇文章也不是Swift的教程，而是一名OC">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-01-11T09:44:36.553Z">
+<meta property="og:updated_time" content="2020-01-11T09:53:36.586Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swift 初探">
 <meta name="twitter:description" content="前言　　因为公司打算项目全面转 Swift，于是我与同事开始了漫长的 Swift 探索之路。初用的时候会很不习惯，因为Swift和Objective-C从语法上来说是两门完全不同的语言，OC延续了C系语言一贯的啰嗦，需要些很多的代码才能完善这个类或变量，而这些啰嗦的语句其实也深深的嵌入了项目之中，拖慢整个项目的编译进度，增大安装包（虽然不太明显）。 　　这篇文章也不是Swift的教程，而是一名OC">
@@ -967,9 +967,14 @@
               })
           } else {
             
-              var $element = $(document.getElementById(url));
-              $element.find('.leancloud-visitors-count').text('Counter not initialized! More info at console err msg.');
-              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
             
           }
         })

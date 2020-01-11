@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-01-11T09:44:36.553Z</updated>
+  <updated>2020-01-11T09:53:36.586Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yoursite.com/2020/01/05/Swift/"/>
     <id>http://yoursite.com/2020/01/05/Swift/</id>
     <published>2020-01-05T07:39:28.000Z</published>
-    <updated>2020-01-11T09:44:36.553Z</updated>
+    <updated>2020-01-11T09:53:36.586Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>　　因为公司打算项目全面转 <code>Swift</code>，于是我与同事开始了漫长的 <code>Swift</code> 探索之路。初用的时候会很不习惯，因为<code>Swift</code>和<code>Objective-C</code>从语法上来说是两门完全不同的语言，<code>OC</code>延续了<code>C</code>系语言一贯的啰嗦，需要些很多的代码才能完善这个类或变量，而这些啰嗦的语句其实也深深的嵌入了项目之中，拖慢整个项目的编译进度，增大安装包（虽然不太明显）。</p>
 <p>　　这篇文章也不是<code>Swift</code>的教程，而是一名<code>OC</code>程序猿转<code>Swift</code>时所遇到的困难。</p>
@@ -520,12 +520,12 @@
 </blockquote>
 <p>　　<a id="more"></a></p>
 
-        <div id="aplayer-Wrrctyjt" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-aYSNGghF" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-Wrrctyjt"),
+            element: document.getElementById("aplayer-aYSNGghF"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -638,12 +638,12 @@
 </blockquote>
 <p>　    <a id="more"></a></p>
 
-        <div id="aplayer-xoDfHHHb" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-gpdSOVxU" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-xoDfHHHb"),
+            element: document.getElementById("aplayer-gpdSOVxU"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -1506,12 +1506,12 @@
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><p>　　好久没看书了，一到放假，看书的效率就从一个月两三本，变成了一个月一本。有点惭愧。</p>
 <p>​    <a id="more"></a></p>
 
-        <div id="aplayer-YoefSOrU" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-OeHGQsTO" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-YoefSOrU"),
+            element: document.getElementById("aplayer-OeHGQsTO"),
             narrow: false,
             autoplay: true,
             showlrc: false,
