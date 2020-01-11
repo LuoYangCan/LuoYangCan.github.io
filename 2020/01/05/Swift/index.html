@@ -134,7 +134,7 @@
 <meta property="og:site_name" content="阿灿的大树洞">
 <meta property="og:description" content="前言　　因为公司打算项目全面转 Swift，于是我与同事开始了漫长的 Swift 探索之路。初用的时候会很不习惯，因为Swift和Objective-C从语法上来说是两门完全不同的语言，OC延续了C系语言一贯的啰嗦，需要些很多的代码才能完善这个类或变量，而这些啰嗦的语句其实也深深的嵌入了项目之中，拖慢整个项目的编译进度，增大安装包（虽然不太明显）。 　　这篇文章也不是Swift的教程，而是一名OC">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-01-11T09:59:25.162Z">
+<meta property="og:updated_time" content="2020-01-11T10:06:49.483Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swift 初探">
 <meta name="twitter:description" content="前言　　因为公司打算项目全面转 Swift，于是我与同事开始了漫长的 Swift 探索之路。初用的时候会很不习惯，因为Swift和Objective-C从语法上来说是两门完全不同的语言，OC延续了C系语言一贯的啰嗦，需要些很多的代码才能完善这个类或变量，而这些啰嗦的语句其实也深深的嵌入了项目之中，拖慢整个项目的编译进度，增大安装包（虽然不太明显）。 　　这篇文章也不是Swift的教程，而是一名OC">
@@ -481,7 +481,8 @@
 <p>　　还有一种可以将两种方式结合的解包方法，不过极不推荐，至于为什么，看代码就知道了！</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> str1: <span class="type">String</span>?</div><div class="line"><span class="keyword">var</span> str2: <span class="type">String</span> = <span class="string">"123"</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="number">_</span> = str2 &#123;</div><div class="line">    label2.text = str2! </div><div class="line">&#125;</div><div class="line"><span class="comment">// label2.text = "123"</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="number">_</span> = str1 &#123;</div><div class="line">    label2.text = str1!</div><div class="line">&#125;</div><div class="line"><span class="comment">// label2.text = nil</span></div><div class="line"></div><div class="line"><span class="keyword">guard</span> <span class="keyword">let</span> <span class="number">_</span> = str1 <span class="keyword">else</span> &#123;<span class="keyword">return</span>&#125;</div><div class="line">label1.text = str1!</div><div class="line"><span class="comment">// label1.text = nil</span></div><div class="line"></div><div class="line"><span class="keyword">guard</span> <span class="keyword">let</span> <span class="number">_</span> = str2 <span class="keyword">else</span> &#123;<span class="keyword">return</span>&#125;</div><div class="line">label2.text = str2!</div><div class="line"><span class="comment">// label2.text = "123"</span></div></pre></td></tr></table></figure>
 <p>　　因为<code>guard else</code>方法将<code>nil</code> 的变量<code>return</code>了，所以我们强制解包的时候不会有什么问题。但<code>if let</code>就不一样了，因为用了强制解包，根据语义应该是必定有值的，但是却并没有，这对于要写优雅代码的我们来说是个不好的写法。</p>
-<h1 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h1>
+<p>To be continue..</p>
+
       
     </div>
 
@@ -750,7 +751,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Optional"><span class="nav-number">2.</span> <span class="nav-text">Optional</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解包"><span class="nav-number">2.1.</span> <span class="nav-text">解包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#与"><span class="nav-number">2.1.1.</span> <span class="nav-text">! 与 ??</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可选绑定"><span class="nav-number">2.1.2.</span> <span class="nav-text">可选绑定</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#KVO"><span class="nav-number">3.</span> <span class="nav-text">KVO</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Optional"><span class="nav-number">2.</span> <span class="nav-text">Optional</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解包"><span class="nav-number">2.1.</span> <span class="nav-text">解包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#与"><span class="nav-number">2.1.1.</span> <span class="nav-text">! 与 ??</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可选绑定"><span class="nav-number">2.1.2.</span> <span class="nav-text">可选绑定</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
