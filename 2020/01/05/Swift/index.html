@@ -134,7 +134,7 @@
 <meta property="og:site_name" content="阿灿的大树洞">
 <meta property="og:description" content="前言　　因为公司打算项目全面转 Swift，于是我与同事开始了漫长的 Swift 探索之路。初用的时候会很不习惯，因为Swift和Objective-C从语法上来说是两门完全不同的语言，OC延续了C系语言一贯的啰嗦，需要些很多的代码才能完善这个类或变量，而这些啰嗦的语句其实也深深的嵌入了项目之中，拖慢整个项目的编译进度，增大安装包（虽然不太明显）。 　　这篇文章也不是Swift的教程，而是一名OC">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-01-11T10:06:49.483Z">
+<meta property="og:updated_time" content="2020-03-14T06:25:10.088Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swift 初探">
 <meta name="twitter:description" content="前言　　因为公司打算项目全面转 Swift，于是我与同事开始了漫长的 Swift 探索之路。初用的时候会很不习惯，因为Swift和Objective-C从语法上来说是两门完全不同的语言，OC延续了C系语言一贯的啰嗦，需要些很多的代码才能完善这个类或变量，而这些啰嗦的语句其实也深深的嵌入了项目之中，拖慢整个项目的编译进度，增大安装包（虽然不太明显）。 　　这篇文章也不是Swift的教程，而是一名OC">
@@ -364,8 +364,8 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/05/Swift/"/>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Reus"/>
-      <meta itemprop="description" content="纸上得来终觉浅，绝知此事要躬行"/>
+      <meta itemprop="name" content="Krox"/>
+      <meta itemprop="description" content="iOS 开发者"/>
       <meta itemprop="image" content="/images/avatar.gif"/>
     </span>
 
@@ -481,7 +481,26 @@
 <p>　　还有一种可以将两种方式结合的解包方法，不过极不推荐，至于为什么，看代码就知道了！</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> str1: <span class="type">String</span>?</div><div class="line"><span class="keyword">var</span> str2: <span class="type">String</span> = <span class="string">"123"</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="number">_</span> = str2 &#123;</div><div class="line">    label2.text = str2! </div><div class="line">&#125;</div><div class="line"><span class="comment">// label2.text = "123"</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="number">_</span> = str1 &#123;</div><div class="line">    label2.text = str1!</div><div class="line">&#125;</div><div class="line"><span class="comment">// label2.text = nil</span></div><div class="line"></div><div class="line"><span class="keyword">guard</span> <span class="keyword">let</span> <span class="number">_</span> = str1 <span class="keyword">else</span> &#123;<span class="keyword">return</span>&#125;</div><div class="line">label1.text = str1!</div><div class="line"><span class="comment">// label1.text = nil</span></div><div class="line"></div><div class="line"><span class="keyword">guard</span> <span class="keyword">let</span> <span class="number">_</span> = str2 <span class="keyword">else</span> &#123;<span class="keyword">return</span>&#125;</div><div class="line">label2.text = str2!</div><div class="line"><span class="comment">// label2.text = "123"</span></div></pre></td></tr></table></figure>
 <p>　　因为<code>guard else</code>方法将<code>nil</code> 的变量<code>return</code>了，所以我们强制解包的时候不会有什么问题。但<code>if let</code>就不一样了，因为用了强制解包，根据语义应该是必定有值的，但是却并没有，这对于要写优雅代码的我们来说是个不好的写法。</p>
-<p>To be continue..</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>Optional</code> 让 <code>Swift</code>的变量更加安全了，我们在写代码时就能发现很多变量存在的问题，在运行时也不用担心变量突然为 <code>nil</code> 的问题了。</p>
+<h1 id="Initialize"><a href="#Initialize" class="headerlink" title="Initialize"></a>Initialize</h1><p>搞过 Swift 开发的同学应该知道，Swift 的初始化可以说是相当严苛的，那苹果这么做的目的是什么呢？</p>
+<p>其实就是安全，单纯的安全。我们知道，在 OC 中，init 方法是很不安全的，你永远也猜不到一个 init 方法里到底有没有初始化每个变量。</p>
+<p>所以 Swift 有了一套很严格的初始化方法，引入了一套名词——或许以前就有？——<code>designated</code>、<code>required</code>、<code>convenience</code>。</p>
+<h2 id="designated"><a href="#designated" class="headerlink" title="designated"></a>designated</h2><p><code>designated</code>关键字主要是指明这个方法是子类必须要调用的方法<code>比如 cell 里需要调用的initWithStyle:reuseIdentifier:</code>，虽然这个解释看起来更像<code>required</code>，但是<code>required</code>其实是来指明子类必须进行重写实现的方法。<code>designated</code>保证了父类指定的方法肯定会被子类调用，保证该对象可以进行完整的初始化。</p>
+<h2 id="convenience"><a href="#convenience" class="headerlink" title="convenience"></a>convenience</h2><p><code>convenience</code>则是一种旨在“补充”的初始化方法，相信大家都在 OC 中的类中声明了许多 <code>init</code> 方法，而这些方法都是调用的一个方法<code>(其实就是 designated)</code> ，与那个唯一方法的区别就是少了几个变量的初始化（转为了固定值）。<code>convenience</code>就是这样的一个方法，以<code>convenience</code>声明的<code>init</code>方法必须调用<strong>自己类</strong> (self) 的<code>designated</code>。值得一提的是<code>convenience</code>方法是不允许子类调用的或重写的，这也保证了<code>所有类都必须调用父类的 designated 方法完成完整的初始化</code>。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassA</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> <span class="type">A</span>: <span class="type">Int</span></div><div class="line">    <span class="keyword">init</span>(num: <span class="type">Int</span>) &#123;<span class="comment">// designated</span></div><div class="line">        <span class="type">A</span> = num</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">convenience</span> <span class="keyword">init</span>(aNum: <span class="type">Bool</span>) &#123;</div><div class="line">        <span class="comment">// 调用自己类的 designated 方法</span></div><div class="line">        <span class="keyword">self</span>.<span class="keyword">init</span>(num: aNum ? <span class="number">10000</span> : <span class="number">1</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassB</span>: <span class="title">ClassA</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> <span class="type">B</span>: <span class="type">Int</span></div><div class="line"></div><div class="line">    <span class="keyword">override</span> <span class="keyword">init</span>(num: <span class="type">Int</span>) &#123;</div><div class="line">        numB = num + <span class="number">1</span></div><div class="line">        <span class="comment">// 必须调用父类的 designated，这里也调用不了 ClassA 的 convenience 方法</span></div><div class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(num: num)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>不过如果你重写了父类<code>convenience</code>中调用的<code>init</code>方法，那你也可以直接在代码中用父类的<code>convenience</code>初始化方法初始化子类。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> <span class="type">A</span> = <span class="type">ClassB</span>(bigNum: <span class="literal">true</span>)</div><div class="line"><span class="comment">// A.A = 10000 A.B = 10001</span></div></pre></td></tr></table></figure>
+<h2 id="required"><a href="#required" class="headerlink" title="required"></a>required</h2><p>我们可以将一个初始化设置为<code>required</code>来让子类强制重写它。比如我们可以让子类重写父类<code>convenience</code>中所需要的<code>designated</code>方法，来确保子类也可以用父类的<code>convenience</code>方法初始化。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 还是上面那个方法，不过这次强制子类实现 init(num:)方法了</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassA</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> <span class="type">A</span>: <span class="type">Int</span></div><div class="line">    <span class="keyword">required</span> <span class="keyword">init</span>(num: <span class="type">Int</span>) &#123;<span class="comment">// designated</span></div><div class="line">        <span class="type">A</span> = num</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">convenience</span> <span class="keyword">init</span>(aNum: <span class="type">Bool</span>) &#123;</div><div class="line">        <span class="comment">// 调用自己类的 designated 方法</span></div><div class="line">        <span class="keyword">self</span>.<span class="keyword">init</span>(num: aNum ? <span class="number">10000</span> : <span class="number">1</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassB</span>: <span class="title">ClassA</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> <span class="type">B</span>: <span class="type">Int</span></div><div class="line">    <span class="comment">// 强制重写，不重写的话会报错</span></div><div class="line">    <span class="keyword">required</span> <span class="keyword">init</span>(num: <span class="type">Int</span>) &#123;</div><div class="line">        numB = num + <span class="number">1</span></div><div class="line">        <span class="comment">// 必须调用父类的 designated，这里也调用不了 ClassA 的 convenience 方法</span></div><div class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(num: num)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们甚至组合使用<code>convenience</code>和<code>required</code>来让子类强制实现（相当于重新声明一个<code>convenience</code>）父类的<code>convenience</code>方法。这样做可以保证子类不能直接使用到父类的<code>convenience</code>方法初始化。</p>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>根据上面说的，我们可以总结出初始化的时候应该遵循几个原则：</p>
+<ul>
+<li><p>本类必须要有个<code>designated</code>来达到初始化的目的</p>
+</li>
+<li><p>本类的所有<code>convenience</code>初始化方法，都必须调用自己类的<code>designated</code>初始化方法来达到完全的初始化</p>
+</li>
+<li>子类的<code>designated</code>必须调用父类的<code>designated</code>方法以保证父类也初始化完成</li>
+</ul>
 
       
     </div>
@@ -593,10 +612,10 @@
             
               <img class="site-author-image" itemprop="image"
                 src="/images/avatar.gif"
-                alt="Reus"/>
+                alt="Krox"/>
             
-              <p class="site-author-name" itemprop="name">Reus</p>
-              <p class="site-description motion-element" itemprop="description">纸上得来终觉浅，绝知此事要躬行</p>
+              <p class="site-author-name" itemprop="name">Krox</p>
+              <p class="site-description motion-element" itemprop="description">iOS 开发者</p>
           </div>
 
           
@@ -751,7 +770,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Optional"><span class="nav-number">2.</span> <span class="nav-text">Optional</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解包"><span class="nav-number">2.1.</span> <span class="nav-text">解包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#与"><span class="nav-number">2.1.1.</span> <span class="nav-text">! 与 ??</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可选绑定"><span class="nav-number">2.1.2.</span> <span class="nav-text">可选绑定</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Optional"><span class="nav-number">2.</span> <span class="nav-text">Optional</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解包"><span class="nav-number">2.1.</span> <span class="nav-text">解包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#与"><span class="nav-number">2.1.1.</span> <span class="nav-text">! 与 ??</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可选绑定"><span class="nav-number">2.1.2.</span> <span class="nav-text">可选绑定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">2.2.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Initialize"><span class="nav-number">3.</span> <span class="nav-text">Initialize</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#designated"><span class="nav-number">3.1.</span> <span class="nav-text">designated</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#convenience"><span class="nav-number">3.2.</span> <span class="nav-text">convenience</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#required"><span class="nav-number">3.3.</span> <span class="nav-text">required</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-1"><span class="nav-number">3.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -775,7 +794,7 @@
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Reus</span>
+  <span class="author" itemprop="copyrightHolder">Krox</span>
 
   
 
