@@ -144,7 +144,7 @@ tags: [iOS]
 
 **EqualSpacing**
 
-　　使子视图宽高不变，中间等距排列（自动计算间距使得子控件充满`stackView`）
+　　使子视图根据 `spacing` 等距排列。
 
 ![DistributionEqualSpacing](/img/stackView/DistributionEqualSpacing.png)
 
@@ -155,14 +155,6 @@ tags: [iOS]
 　　使子视图的中心点之间的距离保持一致，有点类似于`EqualSpacing`
 
 ![DistributionEqualCentering](/img/stackView/DistributionEqualCentering.png)
-
-
-
-### Spacing
-
-　　控制子视图之间的间隔，会优先生效。
-
-　　如在`FillEqually`情况下，子视图设置了`Spacing`，则子视图之间会有固定间隔，且子视图的宽/高被压缩。
 
 
 
