@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-14T06:25:10.088Z</updated>
+  <updated>2020-08-02T10:18:28.903Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,82 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>WWDC 20 的那些事儿</title>
+    <link href="http://yoursite.com/2020/08/02/WWDC-20/"/>
+    <id>http://yoursite.com/2020/08/02/WWDC-20/</id>
+    <published>2020-08-02T08:35:02.000Z</published>
+    <updated>2020-08-02T10:18:28.903Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>　　WWDC 20 也过去一段时间了，这次的 WWDC 带给了开发者们不小的惊喜，所以我在这里也尝试记录一下 WWDC 20 之后的新变化。</p>
+<a id="more"></a>
+<h2 id="Swift"><a href="#Swift" class="headerlink" title="Swift"></a>Swift</h2><p>　　众所周知，<code>Swift</code>是苹果现在和未来主推的一门语言。国内外有很多的  APP 项目已经从<code>Objective-C</code>迁移到了<code>Swift</code>。这次的更新想必也会想让更多的开发者蠢蠢欲动转为<code>`Swift Coder</code>。</p>
+<h3 id="Runtime-Performance"><a href="#Runtime-Performance" class="headerlink" title="Runtime Performance"></a>Runtime Performance</h3><h4 id="Code-Size"><a href="#Code-Size" class="headerlink" title="Code Size"></a>Code Size</h4><p>　　苹果一直在观察<code>Swift</code>项目产物中的<code>__text</code>的大小，从下图我们可以看出，在<code>Swift 5.3</code>里，<code>Code Size</code>已经变成了<code>OC</code>的 1.5 倍。</p>
+<p><img src="/img/WWDC20/SwiftCodeSize.png" alt="SwiftCodeSize"></p>
+<p>　　我们之前常说<code>OC</code>是一门很啰嗦的语言，这一点可以在方法名的调用里看出来，一个多参数的方法调用会生成很长的代码，这样一点也不美观，而生成的<code>Code Size</code>也相应的很大。而<code>Swift</code>在这方面表现的好很多，但为什么<code>Code Size</code>还越来越多了呢？官方的解释是因为<code>Swift</code>带有一些安全相关的 Feature，这些在生成的产物中需要有一定量的代码实现，从而增加了 Size。</p>
+<h4 id="Dirty-Memory"><a href="#Dirty-Memory" class="headerlink" title="Dirty Memory"></a>Dirty Memory</h4><p>　　有<code>Dirty Memory</code>，相应的就有<code>Clean Memory</code>。对于<code>iOS</code>来说<code>Clean Memory</code>指的就是可以被重新创建的内存，主要分为以下几类。</p>
+<ul>
+<li>App 的二进制文件</li>
+<li>framework 中的 _DATA_Const 段</li>
+<li>文件映射的内存</li>
+<li>未写入数据的内存</li>
+</ul>
+<p>　　相应的，<code>Dirty Memory</code>指的就是不能被系统回收的内存占用。</p>
+<p>　　现在我们有这么一段代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">// Model</div><div class="line">@interface Mountain: NSObject</div><div class="line">&#123;</div><div class="line">    NSUUID *uuid;</div><div class="line">    NSString *name;</div><div class="line">    float *height;</div><div class="line">&#125;</div><div class="line">@end</div><div class="line">    </div><div class="line">NSArray&lt;Mountain *&gt; *mountains = loadMountains()</div></pre></td></tr></table></figure>
+<p>　　众所周知，<code>OC</code>中的<code>NSArray</code>存的是对应元素的指针，这个从深浅拷贝就可以看出来。由于<code>Tagged Pointer</code>，某些<code>NSString</code>比较短（没有超过 8 字节），无需用指针存储对象以达到优化。</p>
+<p>　　在<code>Swift</code>中，<code>Array</code>的直接存储值（<code>Swift</code>中数组是直接存储值）最大上限变成了 16 个字节， 15 位的长度可以应对更多的场景。</p>
+<p>　　于是<code>Mountain</code>在两种语言中会有这种区别：</p>
+<p><img src="/img/WWDC20/SwiftArray.png" alt="dirty memroy"></p>
+<h4 id="Swift-标准库下沉"><a href="#Swift-标准库下沉" class="headerlink" title="Swift 标准库下沉"></a>Swift 标准库下沉</h4><p>　　<code>Swift Standard Library</code>现在变成了 <code>Foundation</code>的依赖。后续苹果应该会完善 API ，那些只能通过<code>C</code>和<code>OC</code>访问的方法也会逐步迁移。</p>
+<h3 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h3><h4 id="诊断策略"><a href="#诊断策略" class="headerlink" title="诊断策略"></a>诊断策略</h4><p>　　新版本的<code>Swift Compiler</code>中，更新了新的诊断策略方案</p>
+<ul>
+<li>使用全新定位代码问题的策略</li>
+<li>更加精确提示以及可行性更高的提示方案</li>
+</ul>
+<h4 id="代码补全"><a href="#代码补全" class="headerlink" title="代码补全"></a>代码补全</h4><p>　　从以下的例子可以看出，<code>Swift</code>的代码提示有了更进一步的加强</p>
+<p><img src="/img/WWDC20/三元表达式补全.png" alt="三元表达式的补全"></p>
+<p><img src="/img/WWDC20/KeyPath.png" alt="KeyPath"></p>
+<p>　　Xcode 12 的代码补全速度也有了较大的提高。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><h4 id="多尾随闭包"><a href="#多尾随闭包" class="headerlink" title="多尾随闭包"></a>多尾随闭包</h4><p>　　在之前的<code>Swift</code>中，尾随闭包只允许当成最后<strong>一个</strong>参数，现在可以有多个尾随闭包了。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="type">UIView</span>.animate(withDuration: <span class="number">0.3</span>) &#123;</div><div class="line">    <span class="keyword">self</span>.view.alpha = <span class="number">0</span></div><div class="line">&#125; completion: &#123; <span class="number">_</span> <span class="keyword">in</span> </div><div class="line">    <span class="keyword">self</span>.view.removeFromSuperview()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="KeyPath-函数化"><a href="#KeyPath-函数化" class="headerlink" title="KeyPath 函数化"></a>KeyPath 函数化</h4><p>　　在<code>Swift 4.1</code>中引入了<code>KeyPath</code>。新版本中我们可以把<code>KeyPath</code>作为函数使用。</p>
+<p>　　下面的例子里，我们使用<code>KeyPath</code>访问每个属性的<code>shoeSize</code>属性代替复杂的闭包。</p>
+<p><img src="/img/WWDC20/KeyPathMethod.png" alt="函数化"></p>
+<h4 id="隐式-self"><a href="#隐式-self" class="headerlink" title="隐式 self"></a>隐式 self</h4><p>　　在以前的<code>Swift</code>版本中，我们必须显式声明<code>self</code>，而新版本则在闭包中增加隐式<code>self</code>，这个在<code>SwiftUI</code>中很有用处。</p>
+<p>　　但是对于循环引用的闭包，看来<code>[weak self] 和 guard let self = self else {return}</code>还是无法避免显示声明。</p>
+<p><img src="/img/WWDC20/Self.png" alt="隐式 self in SwiftUI"></p>
+<h4 id="多模式捕获"><a href="#多模式捕获" class="headerlink" title="多模式捕获"></a>多模式捕获</h4><p>　　之前的<code>Swift</code>中，我们用<code>try Catch{}</code>往往要进行一些类型判断或者<code>switch case</code>。</p>
+<p>　　在 5.3 中，我们可以使用多个 <code>catch</code>来达到<code>switch</code>的效果。</p>
+<p><img src="/img/WWDC20/Switch.png" alt="多模式捕获"></p>
+<h4 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h4><ul>
+<li>比较</li>
+</ul>
+<p>　　当<code>enum</code>遵循<code>Comparable</code>时就可以对枚举进行比较。</p>
+<p><img src="/img/WWDC20/enumCompare.png" alt="比较"></p>
+<ul>
+<li>enum cases as protocol witnesses</li>
+</ul>
+<p>　　当我们的枚举遵循一些协议的时候，我们不再需要重复写一遍方法名。</p>
+<p><img src="/img/WWDC20/enum cases as protocol witnesses.png" alt="enum cases as protocol witnesses"></p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>　　笔者已经在早些时候开始转向<code>Swift</code>并在极力 push 公司的项目向<code>Swift</code>转化。</p>
+<p>　　看了这次的<code>WWDC 20</code>，这样的<code>Swift</code>，怎能不爱？</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://xiaozhuanlan.com/topic/2804537169" target="_blank" rel="external">What’s new in Swift</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;　　WWDC 20 也过去一段时间了，这次的 WWDC 带给了开发者们不小的惊喜，所以我在这里也尝试记录一下 WWDC 20 之后的新变化。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
+    
+      <category term="WWDC" scheme="http://yoursite.com/tags/WWDC/"/>
+    
+  </entry>
   
   <entry>
     <title>Swift 初探</title>
@@ -537,12 +613,12 @@
 </blockquote>
 <p>　　<a id="more"></a></p>
 
-        <div id="aplayer-aYSNGghF" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-pdoNwyjI" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-aYSNGghF"),
+            element: document.getElementById("aplayer-pdoNwyjI"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -655,12 +731,12 @@
 </blockquote>
 <p>　    <a id="more"></a></p>
 
-        <div id="aplayer-gpdSOVxU" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-YVceWAHz" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-gpdSOVxU"),
+            element: document.getElementById("aplayer-YVceWAHz"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -1523,12 +1599,12 @@
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><p>　　好久没看书了，一到放假，看书的效率就从一个月两三本，变成了一个月一本。有点惭愧。</p>
 <p>​    <a id="more"></a></p>
 
-        <div id="aplayer-OeHGQsTO" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-nHlDOCTy" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-OeHGQsTO"),
+            element: document.getElementById("aplayer-nHlDOCTy"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -1808,55 +1884,6 @@
       <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
     
       <category term="iBeacon" scheme="http://yoursite.com/tags/iBeacon/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>项目里的ReactiveCocoa</title>
-    <link href="http://yoursite.com/2017/07/28/%E9%A1%B9%E7%9B%AE%E9%87%8C%E7%9A%84ReactiveCocoa/"/>
-    <id>http://yoursite.com/2017/07/28/项目里的ReactiveCocoa/</id>
-    <published>2017-07-28T10:59:44.000Z</published>
-    <updated>2019-11-10T07:00:43.262Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\assets\js\Meting.min.js"></script><p>　　最近做了一个蓝牙相关的项目，项目的前辈当时是用的ReactiveCocoa（RAC）做的，才开始接手的时候，看的一头雾水。经过一段时间自学，现在对RAC略知一二。</p>
-<p>​    <a id="more"></a></p>
-<h2 id="FunctionalReactiveProgramming"><a href="#FunctionalReactiveProgramming" class="headerlink" title="FunctionalReactiveProgramming"></a>FunctionalReactiveProgramming</h2><p>FRP是一种响应变化的编程范式。<img src="/img/FRP.png" alt="FRP"></p>
-<p>就像上面的登录界面，在用户输入用户名和密码之前，登陆按钮是处于无法点击状态的，只有当用户名和密码都被填入一定值的时候，才可以点击登陆按钮。这种一个按钮会由于另外几个控件的改变而改变的联动就是FRP。</p>
-<h2 id="ReactiveCocoa"><a href="#ReactiveCocoa" class="headerlink" title="ReactiveCocoa"></a>ReactiveCocoa</h2><p>RAC是github上的一个开源项目，可以说是将响应式编程做到了极致。RAC中，通过<strong>RACsignal</strong>来发送信号以执行各种操作</p>
-<p>在这里，<a href="limboy.me">limboy(李忠)</a> 的文章里写的很好</p>
-<p>他把信号比作水龙头，但是水龙头里装的是直径与水龙头内径一样的玻璃球(Value)，这样，玻璃球就是依次出来的（没有并发）。水龙头是关着的，需要有接收方（Subscriber）打开，这样只要有玻璃球(Value)出现，就会自动给接收方(subscriber)。还可以在水龙头上加一个滤嘴(Filter)，不符合的东西也不让过。还可以加一个改动装置，把球改成符合自己的需求（map）。也可以合并多个水龙头(combineLastest:reduce:)，这样只有有一个水龙头出玻璃球，这个新水龙头的接收方就会得到这个球。</p>
-<p>比如</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//filter某个属性满足一定条件才执行。  </span></div><div class="line"></div><div class="line">  [[RACObserve(<span class="keyword">self</span>, count) filter:^<span class="built_in">BOOL</span>(<span class="keyword">id</span> count) &#123;</div><div class="line">  <span class="keyword">if</span> ([count integerValue] == <span class="number">5</span>) &#123;            </div><div class="line">		<span class="keyword">return</span> <span class="literal">YES</span>;        &#125;</div><div class="line">	<span class="keyword">else</span>&#123;           </div><div class="line">	 	<span class="keyword">return</span> <span class="literal">NO</span>;        </div><div class="line">	&#125;   </div><div class="line"> &#125;]subscribeNext:^(<span class="keyword">id</span> count) &#123;<span class="comment">//上面return YES 才执行   </span></div><div class="line"></div><div class="line"> <span class="built_in">NSLog</span>(<span class="string">@"数量为===%@"</span>,count);    &#125;];</div></pre></td></tr></table></figure>
-<p>RAC还在<strong>UIButton、UITextFiled</strong>等的Category中添加了很多方法，可以直接设置事件。</p>
-<h2 id="统一了KVO-Event-Notification等的处理"><a href="#统一了KVO-Event-Notification等的处理" class="headerlink" title="统一了KVO Event Notification等的处理"></a>统一了KVO Event Notification等的处理</h2><blockquote>
-<p>KVO</p>
-</blockquote>
-<p>RAC中监听属性改变不再像KVO中用<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">而是使用block</div><div class="line"></div><div class="line">```objc</div><div class="line">// 只有当名字以&apos;j&apos;开头，才会被记录</div><div class="line">[[RACAble(self.username) filter:^(NSString *newName) &#123;</div><div class="line">       return [newName hasPrefix:@&quot;j&quot;];</div><div class="line">   &#125;]</div><div class="line">   subscribeNext:^(NSString *newName) &#123;</div><div class="line">       NSLog(@&quot;%@&quot;, newName);</div><div class="line">   &#125;];</div></pre></td></tr></table></figure></p>
-<blockquote>
-<p>Notification</p>
-</blockquote>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[[<span class="built_in">NSNotificationCenter</span> defaultCenter]rac_addObserverForName:<span class="string">@"ReceiveData"</span> object:<span class="literal">nil</span>] subscribeNext:^(<span class="built_in">NSNotification</span> * _Nullable x) &#123;</div><div class="line">                <span class="built_in">NSlog</span>(<span class="string">@"%@"</span>,x);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
-<h2 id="冷热信号"><a href="#冷热信号" class="headerlink" title="冷热信号"></a>冷热信号</h2><p>上面提到的只有subscriber订阅时才生效的信号叫做<strong>冷信号</strong></p>
-<p>有冷信号，自然就有<strong>热信号</strong></p>
-<ul>
-<li>热信号是主动的，不管你有没有订阅事件，它会时刻推送。</li>
-<li>热信号可以有多个订阅者，信号和订阅者可以共享信息，多个订阅者可以在订阅开始时同时接收到这个时间及以后的信号（热信号创建时若没有订阅者，它仍然会进行信号发送），而冷信号多个订阅者订阅时，是将信号完整的分别发送给订阅者。</li>
-</ul>
-<p>冷热信号的区分，美团点评技术团队的<a href="https://tech.meituan.com/talk-about-reactivecocoas-cold-signal-and-hot-signal-part-1.html" target="_blank" rel="external">细说ReactiveCocoa的冷热信号</a>文章写的非常的好。</p>
-<p>因为项目的需要，本人还在不断学习，归纳的东西还不够成熟，希望自己能加油吧。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;　　最近做了一个蓝牙相关的项目，项目的前辈当时是用的ReactiveCocoa（RAC）做的，才开始接手的时候，看的一头雾水。经过一段时间自学，现在对RAC略知一二。&lt;/p&gt;
-&lt;p&gt;​
-    
-    </summary>
-    
-    
-      <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
-    
-      <category term="RAC" scheme="http://yoursite.com/tags/RAC/"/>
     
   </entry>
   
