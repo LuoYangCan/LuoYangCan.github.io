@@ -4,7 +4,7 @@
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 7.3.0">
+<meta name="generator" content="Hexo 8.1.2">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -258,7 +258,7 @@
 <p>当然我们也可以手动干预</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-(<span class="type">void</span>)viewDidLoad&#123;</span><br><span class="line">    [<span class="variable language_">super</span> viewDidLoad];</span><br><span class="line">  <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">      <span class="built_in">NSString</span> *str = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;Reus&quot;</span>];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">NSLog</span>(<span class="string">@&quot;%@&quot;</span>,str); <span class="comment">//Console: (null)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="AutoreleasePoolPage"><a href="#AutoreleasePoolPage" class="headerlink" title="AutoreleasePoolPage"></a>AutoreleasePoolPage</h2><p>ARC 下，我们用<code>@autoreleasepool&#123;&#125;</code>来使用一个 AutoreleasePool，随后编译器会转化为这样</p>
+<h2 id="AutoreleasePoolPage"><a href="#AutoreleasePoolPage" class="headerlink" title="AutoreleasePoolPage"></a>AutoreleasePoolPage</h2><p>ARC 下，我们用<code>@autoreleasepool{}</code>来使用一个 AutoreleasePool，随后编译器会转化为这样</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *context = objc_autoreleasePoolPush();</span><br><span class="line"><span class="comment">//&#123;&#125;中的代码</span></span><br><span class="line">objc_autoreleasePoolPop(context);</span><br></pre></td></tr></table></figure>
 
 <p>这两个函数都是对<code>AutoreleasePoolPage</code>的简单封装，所以自动释放机制核心在于这个类.</p>
